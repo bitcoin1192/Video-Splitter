@@ -70,6 +70,7 @@ def ffmpeg_call():
             print('No job, time for sleeping for 10 second')
             time.sleep(10)
         else:
+            print(job)
             result = search.search_file(const+str(job[0]),"mp4")
             ff.ffmpeg_call(const+job[0]+'/'+result,job[0])
             print('success running ffmpeg project ' + str(job[0]))
