@@ -71,10 +71,10 @@ def ffmpeg_call():
             time.sleep(10)
         else:
             print(job)
-            result = search.search_file(const+str(job[0]),"mp4")
-            ff.ffmpeg_call(const+job[0]+'/'+result,job[0])
-            print('success running ffmpeg project ' + str(job[0]))
-            result = search.search_file(const+'cdn'+str(job[0]),"mp4")
+            result = search.search_file(const+str(job),"mp4")
+            ff.ffmpeg_call(const+job+'/'+result,job)
+            print('success running ffmpeg project ' + str(job))
+            result = search.search_file(const+'cdn'+str(job),"mp4")
             if not result:
                 print('can\'t find the split file on '+ const) 
             for i in result:

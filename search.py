@@ -41,6 +41,6 @@ def access_queue():
 def search_file(konst,format):
     result = []
     for file_name in os.listdir(path = konst):
-        if file_name.endswith(".",format):
+        if file_name.endswith(("."+str(format))):
             result.append(file_name)
     return result
