@@ -71,7 +71,7 @@ def ffmpeg_call():
             time.sleep(10)
         else:
             result = search.search_file(const+str(job[0]),"mp4")
-            ff.ffmpeg_call(job[0])
+            ff.ffmpeg_call(const+job[0]+'/'+result,job[0])
             print('success running ffmpeg project ' + str(job[0]))
             result = search.search_file(const+'cdn'+str(job[0]),"mp4")
             if not result:
