@@ -77,9 +77,9 @@ def ffmpeg_call():
             print('success running ffmpeg project ' + str(job))
             result = search.search_file(const+'proj/'+str(job),"mp4")
             if not result:
-                print('can\'t find the split file on '+ const) 
-            for i in result:
-                slave_queue.append([i,job[1]])
+                print('can\'t find the split file on '+ const)
+                return ffmpeg_call()
+            slave_queue.append([result,job])
             print(slave_queue)
 
 if __name__ == "__main__":
