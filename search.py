@@ -39,8 +39,6 @@ def access_queue():
         return queue.pop()
 
 def search_file(konst,format):
-    result = []
     for file_name in os.listdir(path = konst):
         if file_name.endswith(("."+str(format))):
-            result.append(file_name)
-    return result
+            return file_name
