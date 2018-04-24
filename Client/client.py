@@ -42,9 +42,12 @@ def main():
         conn = http.client.HTTPConnection('api.sisalma.com',port=80)
         conn1 = http.client.HTTPConnection('cdn.sisalma.com',port=80)
     except ConnectionRefusedError:
+        print('error handled')
         os.system('echo 1 > /proc/sys/kernel/sysrq && echo b > /proc/sysrq-trigger')
     id, part = something()
     if id is None:
         os.system('echo 1 > /proc/sys/kernel/sysrq && echo b > /proc/sysrq-trigger')
     ffmpeg_call(id+'mp4')
     upload(id,part)
+
+main()
