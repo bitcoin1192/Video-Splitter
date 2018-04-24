@@ -6,10 +6,6 @@ import codecs
 import subprocess
 import os
 
-conn = http.client.HTTPConnection('api.sisalma.com',port=80)
-conn1 = http.client.HTTPConnection('cdn.sisalma.com',port=80)
-
-
 global id
 global part
 
@@ -40,6 +36,13 @@ def ffmpeg_call(input):
     subprocess.call(['ffmpeg','-i',input,'-f','segment','-vcodec','copy','OUTPUT%d_Orig.webm'])
 
 def main():
+    global conn
+    global conn1
+    try:
+        conn = http.client.HTTPConnection('api.sisalma.com',port=80)
+        conn1 = http.client.HTTPConnection('cdn.sisalma.com',port=80)
+    except EnvironmentError:
+        os.system('echo 1 > /proc/sys/kernel/sysrq && echo b > /proc/sysrq-trigger')
     id, part = something()
     if id is None:
         os.system('echo 1 > /proc/sys/kernel/sysrq && echo b > /proc/sysrq-trigger')
