@@ -40,8 +40,8 @@ def main():
     global api
     global cdn
     try:
-        api = requests.get('api.sisalma.com')
-        cdn = requests.get('cdn.sisalma.com')
+        api = requests.get('http://api.sisalma.com')
+        cdn = requests.get('http://cdn.sisalma.com')
         api.raise_for_status()
     except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
         print('error handled')
