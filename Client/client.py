@@ -6,13 +6,14 @@ import codecs
 import subprocess
 import os
 import requests
+import platform
 
 global id
 global part
 
 def download(file,path):
     link = "/"+path+'/'+file
-    lls = cdn.request("GET", link, headers={'Content-type':'application/json'})
+    lls = cdn.request("GET", link)
     if lls is None:
         return False
     return True
@@ -39,16 +40,17 @@ def ffmpeg_call(input):
 def main():
     global api
     global cdn
+    hostname = platform.node()
     try:
         api = requests.get('http://api.sisalma.com', timeout=10)
         cdn = requests.get('http://cdn.sisalma.com')
         api.raise_for_status()
     except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
         print('error handled')
-        os.system('echo 1 > /proc/sys/kernel/sysrq && echo b > /proc/sysrq-trigger')
+        os.system('gcloud -q compute instances delete %s --zone asia-southeast1-a', hostname)
     id, part = something()
     if id is None:
-        os.system('echo 1 > /proc/sys/kernel/sysrq && echo b > /proc/sysrq-trigger')
+        os.system('gcloud -q compute instances delete %s --zone asia-southeast1-a', hostname)
     ffmpeg_call(id+'mp4')
     upload(id,part)
 
