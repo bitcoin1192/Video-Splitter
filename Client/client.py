@@ -47,10 +47,10 @@ def main():
         api.raise_for_status()
     except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
         print('error handled')
-        os.system('gcloud -q compute instances delete %s --zone asia-southeast1-a', hostname)
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
     id, part = something()
     if id is None:
-        os.system('gcloud -q compute instances delete %s --zone asia-southeast1-a', hostname)
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
     ffmpeg_call(id+'mp4')
     upload(id,part)
 
