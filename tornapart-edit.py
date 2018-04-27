@@ -54,7 +54,6 @@ class slave_comm(tornado.web.RequestHandler):
         #dem = tornado.escape.json_encode(job,part)
         content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
         self.write(content)
-        pass
 
 def main():
     application = tornado.web.Application([
