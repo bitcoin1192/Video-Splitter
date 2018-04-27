@@ -28,7 +28,7 @@ def add_to_queue(array, var):
     print('Added to Queue' + var)
     return True
 
-def queue_pass_array(array):
+def queue_pass_array(array):# Return [,] list
     queue.append(array)
     print(queue)
 
