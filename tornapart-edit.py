@@ -76,8 +76,8 @@ def ffmpeg_call():
             print('No job, time for sleeping for 10 second')
             time.sleep(10)
         else:
-            result = str(search.search_file(const+str(job),"mp4"))#Return list of file
-            print(result)
+            result = search.search_file(const+str(job),"mp4")#Return list of file
+            print(result[0])
             ff.ffmpeg_call(const+job+'/'+result[0],job)#result[0] will result in one string only
             print('success running ffmpeg project ' + str(job))
             result = search.search_file(const+'proj/'+str(job),"mp4")#Return list of file
