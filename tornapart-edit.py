@@ -54,6 +54,7 @@ class slave_comm(tornado.web.RequestHandler):
         #dem = tornado.escape.json_encode(job,part)
         content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
         self.write(content)
+        self.finish()
 
 def main():
     application = tornado.web.Application([
@@ -75,15 +76,16 @@ def ffmpeg_call():
             print('No job, time for sleeping for 10 second')
             time.sleep(10)
         else:
-            result = str(search.search_file(const+str(job),"mp4"))
+            result = str(search.search_file(const+str(job),"mp4"))#Return list of file
             print(result)
-            ff.ffmpeg_call(const+job+'/'+result,job)
+            ff.ffmpeg_call(const+job+'/'+result[0],job)#result[0] will result in one string only
             print('success running ffmpeg project ' + str(job))
-            result = search.search_file(const+'proj/'+str(job),"mp4")
+            result = search.search_file(const+'proj/'+str(job),"mp4")#Return list of file
             if not result:
                 print('can\'t find the split file on '+ const)
                 return ffmpeg_call()
-            slave_queue.append([result,job])
+            for i in result:
+                slave_queue.append([i,job])
             print(slave_queue)
 
 if __name__ == "__main__":
