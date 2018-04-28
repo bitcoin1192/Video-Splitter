@@ -48,7 +48,7 @@ def search_file(konst,format):
                 processed.append(file_name)
             else:
                 pass
-            return processed
+        return processed
     else:
         if not result:
             return None
