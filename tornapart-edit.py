@@ -74,22 +74,30 @@ def main():
 def ffmpeg_call():
     saat = True
     while saat is True:
-        job = search.access_queue()#[proj_id, status, time] array structure
+        
+        #[proj_id, status, time] array structure
+        job = search.access_queue()
+        
         if job is False:
             print('No job, time for sleeping for 10 second')
-            time.sleep(10)
+            time.sleep(15)
         else:
-            result = search.search_file(const+str(job),"mp4")#Return list of file
-            print(result[0])
-            ff.ffmpeg_call(const+job+'/'+result[0],job)#result[0] will result in one string only
+            #Return list of file
+            result = search.search_file(const+str(job),"mp4")
+            
+            #result[0] will result in one string only
+            ff.ffmpeg_call(const+job+'/'+result[0],job)
             print('success running ffmpeg project ' + str(job))
-            result_new = search.search_file(const+'proj/'+str(job),"mp4")#Return list of file
+            
+            #Return list of file
+            result_new = search.search_file(const+'proj/'+str(job),"mp4")
+            
+            #check if result is not find
             if not result_new:
                 print('can\'t find the split file on '+ const)
-                return ffmpeg_call()
             for i in result_new:
                 slave_queue.append([job,i])
-            print(slave_queue)
+    
 
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/'
