@@ -20,6 +20,7 @@ class acak(tornado.web.RequestHandler):
         ff.create_folder(const+'proj/',ngacak)
         print(proj_id[len(proj_id)-1])
         self.write(str(ngacak))
+        self.finish()
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
@@ -30,9 +31,11 @@ class jobstart(tornado.web.RequestHandler):
             search.queue_pass_array(var)#testing for queueing pending job
             print(var)
             self.write(str(var))
+            self.finish()
         else:
             print('Accessing to Unknown ID')
             self.write('Unknown ID')
+            self.finish()
 
 class stats(tornado.web.RequestHandler):
     def get(self):
@@ -80,12 +83,12 @@ def ffmpeg_call():
             print(result[0])
             ff.ffmpeg_call(const+job+'/'+result[0],job)#result[0] will result in one string only
             print('success running ffmpeg project ' + str(job))
-            result = search.search_file(const+'proj/'+str(job),"mp4")#Return list of file
-            if not result:
+            result_new = search.search_file(const+'proj/'+str(job),"mp4")#Return list of file
+            if not result_new:
                 print('can\'t find the split file on '+ const)
                 return ffmpeg_call()
-            for i in result:
-                slave_queue.append([i,job])
+            for i in result_new:
+                slave_queue.append([job,i])
             print(slave_queue)
 
 if __name__ == "__main__":

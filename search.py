@@ -38,12 +38,19 @@ def access_queue():
     else:
         return queue.pop()
 
+#always return list
 def search_file(konst,format):
     result = os.listdir(path = konst)
+    processed = []
     if len(result) > 1:
         for file_name in result:
             if file_name.endswith(("."+str(format))):
+                processed.append(file_name)
                 return file_name
+            else:
+                pass
     else:
-        for file in result:
+        if not result:
+            return None
+        else:
             return result
