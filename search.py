@@ -46,9 +46,9 @@ def search_file(konst,format):
         for file_name in result:
             if file_name.endswith(("."+str(format))):
                 processed.append(file_name)
-                return file_name
             else:
                 pass
+            return processed
     else:
         if not result:
             return None
