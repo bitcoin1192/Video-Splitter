@@ -34,7 +34,7 @@ def get_job(cpu_c):
         except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):    
             return list_job
         dict_responses = r.json()
-        list_job.append(list(dict_responses.value))
+        list_job.append(list(dict_responses.values()))
         count = count + 1
     return list_job
 
