@@ -1,57 +1,87 @@
-import http.client
-import re
 import time
-import json
-import codecs
 import subprocess
 import os
 import requests
 import platform
+import multiprocessing
+from multiprocessing import Pool
 
-global id
-global part
 
-def download(file,path):
-    link = "/"+path+'/'+file
-    lls = cdn.request("GET", link)
-    if lls is None:
-        return False
+def download(job):
+    for i in job:
+        link = "/"+i[0]+'/'+i[1]
+        part_download = requests.get('http://cdn.sisalma.com', timeout=10)
+        if part_download is None:
+            return False
     return True
 
-def upload(file,path):
-    link = "/"+path+'/'+file
-    with open('/'+file, 'rb') as byte:
-        lls = cdn.request("PUT", link, body=byte, headers={'Content-type':'octet-stream/webm'})
+def upload(job):
+    for i in job:
+        link = "/"+i[0]+'/'+i[1]
+    with open(i[0]+'/'+i[1]+'.webm', 'rb') as byte:
+        lls = requests.put('http://cdn.sisalma.com/',files = byte, timeout=10)
     return True
+
+def get_job(cpu_c):
+    list_job = []
+    count = 0
+    
+    #loop as much as needed
+    while count <= int(cpu_c):
+        r = requests.get('http://api.sisalma.com/slave', timeout=10)
+        try :
+            r.raise_for_status()
+        except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):    
+            return list_job
+        dict_responses = r.json()
+        list_job.append(list(dict_responses.value))
+        count = count + 1
+    return list_job
 
 def something():
-    link = api.request("GET", "/slave", headers={'Content-type':'application/json'})
-    jobid = link.getresponse()
-    result = json.load(jobid)
-    if result is None:# after 1 fail attempt shutdown instances immediately
-        return None, None
-    id = result['id']
-    part = result['part']
-    return id, part
+    result = get_job(cpu_count)
     
-def ffmpeg_call(input):
-    subprocess.call(['ffmpeg','-i',input,'-f','segment','-vcodec','copy','OUTPUT%d_Orig.webm'])
+    # after 1 fail attempt shutdown instances immediately
+    if result is None:
+        return None
+    return result
+
+def ffmpeg_call(i):
+    input, name = i[0], i[1]
+    subprocess.call(['ffmpeg','-i','proj/'+input + '/' + name,'-f','segment','-vcodec','copy','encode/'+name+'.webm'])
 
 def main():
-    global api
-    global cdn
+    global cpu_count
+    #Check cpu core count and hostname
     hostname = platform.node()
+    cpu_count = multiprocessing.cpu_count()
+    
+    #check if main server is not ready
     try:
-        api = requests.get('http://api.sisalma.com', timeout=10)
-        cdn = requests.get('http://cdn.sisalma.com')
+        api = requests.get('http://api.sisalma.com/', timeout=10)
         api.raise_for_status()
+    
+    #delete instances as soon as eception encountered 
     except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
-        print('error handled')
+        print('error handled, deleting this instance')
         subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-    id, part = something()
-    if id is None:
+    
+    #check for job availability
+    list_job = something()
+    if list_job is None:
         subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-    ffmpeg_call(id+'mp4')
-    upload(id,part)
+    
+    #download media file
+    res = download(list_job)
+    if res is False:
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+    
+    #run function as much as jobs available at the same time
+    with Pool(processes = len(list_job)-1) as p:
+        p.map(ffmpeg_call, list_job)
+    
+    #upload result to cdn.sisalma.com according to project id
+    upload(list_job)
 
-main()
+if __name__ == '__main__':
+    main()
