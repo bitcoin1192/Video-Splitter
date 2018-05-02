@@ -9,17 +9,16 @@ from multiprocessing import Pool
 
 def download(job):
     for i in job:
-        link = "/"+i[0]+'/'+i[1]
-        part_download = requests.get('http://cdn.sisalma.com', timeout=10)
+        part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10)
         if part_download is None:
             return False
     return True
 
 def upload(job):
     for i in job:
-        link = "/"+i[0]+'/'+i[1]
-    with open(i[0]+'/'+i[1]+'.webm', 'rb') as byte:
-        lls = requests.put('http://cdn.sisalma.com/',files = byte, timeout=10)
+        with open(i[0]+'/'+i[1]+'.webm', 'rb') as byte:
+            requests.put('http://cdn.sisalma.com/'+i[0],files = byte, timeout=10)
+        #files = {'file': ('report.xls', open('report.xls', 'rb'), 'application/vnd.ms-excel', {'Expires': '0'})}
     return True
 
 def get_job(cpu_c):
@@ -48,7 +47,7 @@ def something():
 
 def ffmpeg_call(i):
     input, name = i[0], i[1]
-    subprocess.call(['ffmpeg','-i','proj/'+input + '/' + name,'-f','segment','-vcodec','copy','encode/'+name+'.webm'])
+    subprocess.call(['ffmpeg','-i','proj/'+input+'/'+name,'-f','segment','-vcodec','copy','encode/'+input+'/'+name+'.webm'])
 
 def main():
     global cpu_count
