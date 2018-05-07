@@ -6,6 +6,7 @@ import search
 import time
 import threading
 import ffmpeg as ff
+import json
 
 class utama(tornado.web.RequestHandler):
     def get(self):
@@ -15,10 +16,11 @@ class acak(tornado.web.RequestHandler):
     def get(self):
         ngacak = secrets.token_urlsafe(16)
         proj_id.append([ngacak,0,time.time()])
-        ff.create_folder(const,ngacak)
+        #ff.create_folder(const,ngacak)
         ff.create_folder(const+'proj/',ngacak)
         print(proj_id[len(proj_id)-1])
         self.write(str(ngacak))
+        self.finish()
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
@@ -26,12 +28,15 @@ class jobstart(tornado.web.RequestHandler):
         arr = proj_id
         dem = search.edit_stats(arr, var)
         if dem is True:
-            search.queue_pass_array(var)#testing for queueing pending job
+            #Queueing pending job
+            search.queue_pass_array(var)
             print(var)
             self.write(str(var))
+            self.finish()
         else:
             print('Accessing to Unknown ID')
             self.write('Unknown ID')
+            self.finish()
 
 class stats(tornado.web.RequestHandler):
     def get(self):
@@ -49,7 +54,10 @@ class stats(tornado.web.RequestHandler):
 
 class slave_comm(tornado.web.RequestHandler):
     def get(self):
-        pass
+        job, part = slave_queue.pop()
+        content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
+        self.write(content)
+        self.finish()
 
 def main():
     application = tornado.web.Application([
@@ -66,21 +74,30 @@ def main():
 def ffmpeg_call():
     saat = True
     while saat is True:
-        job = search.access_queue()#[proj_id, status, time] array structure
+        
+        #[proj_id, status, time] array structure
+        job = search.access_queue()
+        
         if job is False:
             print('No job, time for sleeping for 10 second')
-            time.sleep(10)
+            time.sleep(15)
         else:
-            result = str(search.search_file(const+str(job),"mp4"))
-            print(result)
-            ff.ffmpeg_call(const+job+'/'+result,job)
+            #Return list of file
+            result = search.search_file(const+str(job),"mp4")
+            
+            #result[0] will result in one string only
+            ff.ffmpeg_call(const+job+'/'+result[0],job)
             print('success running ffmpeg project ' + str(job))
-            result = search.search_file(const+'proj/'+str(job),"mp4")
-            if not result:
+            
+            #Return list of file
+            result_new = search.search_file(const+'proj/'+str(job),"mp4")
+            
+            #check if result is not find
+            if not result_new:
                 print('can\'t find the split file on '+ const)
-                return ffmpeg_call()
-            slave_queue.append([result,job])
-            print(slave_queue)
+            for i in result_new:
+                slave_queue.append([job,i])
+    
 
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/'
