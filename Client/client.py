@@ -24,7 +24,7 @@ def upload(job):
     for i in job:
         out = os.path.splitext(i[1])[0]
         with open('encode/'+i[0]+'/'+out+'.webm', 'rb') as byte:
-            requests.put('http://cdn.sisalma.com/'+i[0]+'/'+i[1]+'.webm',files = byte, timeout=10)
+            requests.put('http://cdn.sisalma.com/'+i[0]+'/'+out+'.webm',files = byte, timeout=10)
     shutil.rmtree('encode',ignore_errors=True)
     shutil.rmtree('proj',ignore_errors=True)
     return True
