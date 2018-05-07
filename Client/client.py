@@ -10,7 +10,7 @@ import ffmpeg as ff
 
 def download(job):
     for i in job:
-        ff.create_folder('/proj',i[0])
+        ff.create_folder('/proj/',i[0])
         part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10)
         if part_download is None:
             return False
