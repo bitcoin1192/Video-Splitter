@@ -82,7 +82,7 @@ def ffmpeg_call():
             time.sleep(15)
         else:
             #Return list of file
-            result = search.search_file(const+str(job),"mp4")
+            result = search.search_file(const+'/origin/'+str(job),"mp4")
             
             #result[0] will result in one string only
             ff.ffmpeg_call(const+'/origin/'+job+'/'+result[0],job)
