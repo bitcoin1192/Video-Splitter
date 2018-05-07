@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\dhiaa\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
+    "python.pythonPath": "/usr/bin/python3",
     "eslint.enable": false
 }

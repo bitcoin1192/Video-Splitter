@@ -16,7 +16,7 @@ class acak(tornado.web.RequestHandler):
     def get(self):
         ngacak = secrets.token_urlsafe(16)
         proj_id.append([ngacak,0,time.time()])
-        ff.create_folder(const+'origin/',ngacak)
+        ff.create_folder(const,ngacak)
         print(proj_id[len(proj_id)-1])
         self.write(str(ngacak))
         self.finish()
@@ -82,14 +82,14 @@ def ffmpeg_call():
             time.sleep(15)
         else:
             #Return list of file
-            result = search.search_file(const+'/origin/'+str(job),"mp4")
+            result = search.search_file(const+str(job),"mp4")
             
             #result[0] will result in one string only
-            ff.ffmpeg_call(const+'/origin/'+job+'/'+result[0],job)
+            ff.ffmpeg_call(const+job+'/'+result[0],const2+job)
             print('success running ffmpeg project ' + str(job))
             
             #Return list of file
-            result_new = search.search_file(const+'proj/'+str(job),"mp4")
+            result_new = search.search_file(const2+str(job),"mp4")
             
             #check if result is not find
             if not result_new:
@@ -99,7 +99,8 @@ def ffmpeg_call():
     
 
 if __name__ == "__main__":
-    const = '/mnt/volume-sgp1-01/'
+    const = '/mnt/volume-sgp1-01/origin/'
+    const2 = '/mnt/volume-sgp1-01/proj/'
     proj_id = []
     slave_queue = []
     thread = threading.Thread(target=ffmpeg_call, args=())
