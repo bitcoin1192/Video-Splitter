@@ -16,7 +16,7 @@ class acak(tornado.web.RequestHandler):
     def get(self):
         ngacak = secrets.token_urlsafe(16)
         proj_id.append([ngacak,0,time.time()])
-        ff.create_folder(const,ngacak)
+        #ff.create_folder(const,ngacak)
         ff.create_folder(const+'proj/',ngacak)
         print(proj_id[len(proj_id)-1])
         self.write(str(ngacak))
@@ -28,7 +28,8 @@ class jobstart(tornado.web.RequestHandler):
         arr = proj_id
         dem = search.edit_stats(arr, var)
         if dem is True:
-            search.queue_pass_array(var)#testing for queueing pending job
+            #Queueing pending job
+            search.queue_pass_array(var)
             print(var)
             self.write(str(var))
             self.finish()
