@@ -6,21 +6,27 @@ import platform
 import multiprocessing
 from multiprocessing import Pool
 import ffmpeg as ff
+import shutil
 
 
 def download(job):
     for i in job:
-        ff.create_folder('/proj/',i[0])
+        ff.create_folder('proj/',i[0])
+        ff.create_folder('encode/',i[0])
         part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10)
         if part_download is None:
             return False
-        open('/proj/'+i[0]+'/'+i[1]).write(part_download)
+        with open('proj/'+i[0]+'/'+i[1], mode='wb') as files:
+            files.write(part_download.content)
     return True
 
 def upload(job):
     for i in job:
-        with open('proj/'+i[0]+'/'+i[1]+'.webm', 'rb') as byte:
+        out = os.path.splitext(i[1])[0]
+        with open('encode/'+i[0]+'/'+out+'.webm', 'rb') as byte:
             requests.put('http://cdn.sisalma.com/'+i[0]+'/'+i[1]+'.webm',files = byte, timeout=10)
+    shutil.rmtree('encode',ignore_errors=True)
+    shutil.rmtree('proj',ignore_errors=True)
     return True
 
 def get_job(cpu_c):
@@ -49,7 +55,8 @@ def something():
 
 def ffmpeg_call(i):
     input, name = i[0], i[1]
-    subprocess.call(['ffmpeg','-i','proj/'+input+'/'+name,'-f','segment','-vcodec','copy','encode/'+input+'/'+name+'.webm'])
+    out = os.path.splitext(name)[0]
+    subprocess.call(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','encode/'+input+'/'+out+'.webm'])
 
 def main():
     global cpu_count
@@ -79,8 +86,7 @@ def main():
     
     #run function as much as jobs available at the same time
     with Pool(processes = len(list_job)-1) as p:
-        r = p.join()
-        r.map(ffmpeg_call, list_job)
+        p.map(ffmpeg_call, list_job)
     
     #upload result to cdn.sisalma.com according to project id
     upload(list_job)

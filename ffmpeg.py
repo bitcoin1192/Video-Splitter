@@ -10,7 +10,10 @@ def ffmpeg_call(input,name):
 
 #Create folder path for project
 def create_folder(path,name):
-    os.makedirs(str(path)+str(name))
+    try:
+        os.makedirs(str(path)+str(name))
+    except(FileExistsError):
+        return
 
 def read_file_in_folder(folder_name):
     pass
