@@ -5,20 +5,22 @@ import requests
 import platform
 import multiprocessing
 from multiprocessing import Pool
+import ffmpeg as ff
 
 
 def download(job):
     for i in job:
+        ff.create_folder('/proj',i[0])
         part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10)
         if part_download is None:
             return False
+        open('/proj/'+i[0]+'/'+i[1]).write(part_download)
     return True
 
 def upload(job):
     for i in job:
-        with open(i[0]+'/'+i[1]+'.webm', 'rb') as byte:
-            requests.put('http://cdn.sisalma.com/'+i[0],files = byte, timeout=10)
-        #files = {'file': ('report.xls', open('report.xls', 'rb'), 'application/vnd.ms-excel', {'Expires': '0'})}
+        with open('proj/'+i[0]+'/'+i[1]+'.webm', 'rb') as byte:
+            requests.put('http://cdn.sisalma.com/'+i[0]+'/'+i[1]+'.webm',files = byte, timeout=10)
     return True
 
 def get_job(cpu_c):
