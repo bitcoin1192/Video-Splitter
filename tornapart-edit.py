@@ -99,7 +99,7 @@ def ffmpeg_call():
     
 
 if __name__ == "__main__":
-    const = '/mnt/volume-sgp1-01/proj/'
+    const = '/mnt/volume-sgp1-01/origin/'
     proj_id = []
     slave_queue = []
     thread = threading.Thread(target=ffmpeg_call, args=())
