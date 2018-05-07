@@ -17,6 +17,7 @@ class acak(tornado.web.RequestHandler):
         ngacak = secrets.token_urlsafe(16)
         proj_id.append([ngacak,0,time.time()])
         ff.create_folder(const,ngacak)
+        ff.create_folder(const2,ngacak)
         print(proj_id[len(proj_id)-1])
         self.write(str(ngacak))
         self.finish()
