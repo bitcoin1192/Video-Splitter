@@ -16,7 +16,6 @@ class acak(tornado.web.RequestHandler):
     def get(self):
         ngacak = secrets.token_urlsafe(16)
         proj_id.append([ngacak,0,time.time()])
-        #ff.create_folder(const,ngacak)
         ff.create_folder(const+'proj/',ngacak)
         print(proj_id[len(proj_id)-1])
         self.write(str(ngacak))
@@ -100,7 +99,7 @@ def ffmpeg_call():
     
 
 if __name__ == "__main__":
-    const = '/mnt/volume-sgp1-01/'
+    const = '/mnt/volume-sgp1-01/proj'
     proj_id = []
     slave_queue = []
     thread = threading.Thread(target=ffmpeg_call, args=())
