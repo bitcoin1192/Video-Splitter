@@ -77,13 +77,31 @@ class slave_comm(tornado.web.RequestHandler):
                 self.set_status(404)
                 self.finish('nope')
 
+class upload_files(tornado.web.RequestHandler):
+    #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
+    def post(self):
+        files = []
+        try:
+            files = self.request.files['files']
+            proj_id = self.get_argument('proj_id')
+        except:
+            self.set_status(404)
+            self.finish('You didnt upload anything')
+        for xfile in files:
+            filename = xfile['filename']
+            with open(const2+proj_id+'/'+filename, "wb") as out:
+                out.write(xfile['body'])
+        self.set_status(200)
+        self.finish('OK')
+
 def main():
     application = tornado.web.Application([
         (r"/", utama),
         (r"/create", acak),
         (r"/start", jobstart),
         (r"/status", stats),
-        (r"/slave", slave_comm)
+        (r"/slave", slave_comm),
+        (r"/upload", upload_files)
     ])
     application.listen(8888)
     tornado.ioloop.IOLoop.current().start()
