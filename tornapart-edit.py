@@ -56,13 +56,21 @@ class stats(tornado.web.RequestHandler):
 
 class slave_comm(tornado.web.RequestHandler):
     def get(self):
-        try:
-            job, part = slave_queue.pop()
-            content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
-            self.write(content)
-            self.finish()
-        except(IndexError):
-            self.set_status(404)
+        var = self.get_argument('test')
+        if not var:
+            try:
+                job, part = slave_queue.pop()
+                content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
+                self.write(content)
+                self.finish()
+            except(IndexError):
+                self.set_status(404)
+        else:
+            try:
+                cool = len(slave_queue)
+                self.set_status(200)
+            except(IndexError):
+                self.set_status(404)
 
 def main():
     application = tornado.web.Application([
