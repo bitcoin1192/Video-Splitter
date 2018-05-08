@@ -35,7 +35,7 @@ class jobstart(tornado.web.RequestHandler):
             self.finish()
         else:
             print('Accessing to Unknown ID')
-            self.write('Unknown ID')
+            self.write_error(404)
             self.finish()
 
 class stats(tornado.web.RequestHandler):
@@ -44,12 +44,14 @@ class stats(tornado.web.RequestHandler):
         a, b = search.find(proj_id, var)
         if a is None:
             print('Accessing to Unknown ID')
-            self.write('Unknown ID')
+            self.write_error(404)
+            self.finish
         else:
             var = str(a[1])
             count = str(b)
             print(var + count)
             self.write(var)
+            self.finish
         
 
 class slave_comm(tornado.web.RequestHandler):
