@@ -63,7 +63,6 @@ class slave_comm(tornado.web.RequestHandler):
             self.finish()
         except:
             self.write_error(404)
-            self.finish()
 
 def main():
     application = tornado.web.Application([
