@@ -68,9 +68,14 @@ class slave_comm(tornado.web.RequestHandler):
         else:
             try:
                 cool = len(slave_queue)
-                self.set_status(200)
+                if cool == 0 :
+                    raise IndexError
+                else:
+                    self.set_status(200)
+                    self.finish('ok')
             except(IndexError):
                 self.set_status(404)
+                self.finish('nope')
 
 def main():
     application = tornado.web.Application([

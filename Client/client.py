@@ -74,11 +74,13 @@ def main():
     except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
         print('error handled, deleting this instance')
         subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+        exit('woops')
     
     #check for job availability
     list_job = something()
     if list_job is None:
         subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+        exit('woops')
     
     #download media file
     res = download(list_job)
