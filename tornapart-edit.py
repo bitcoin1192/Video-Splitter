@@ -61,6 +61,7 @@ class slave_comm(tornado.web.RequestHandler):
         except(IndexError):
             self.write_error(404)
             self.finish()
+            return
         content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
         self.write(content)
         self.finish()
