@@ -56,7 +56,11 @@ class stats(tornado.web.RequestHandler):
 
 class slave_comm(tornado.web.RequestHandler):
     def get(self):
-        job, part = slave_queue.pop()
+        try:
+            job, part = slave_queue.pop()
+        except(IndexError):
+            self.write_error(404)
+            self.finish()
         content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
         self.write(content)
         self.finish()
