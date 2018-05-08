@@ -56,7 +56,7 @@ class stats(tornado.web.RequestHandler):
 
 class slave_comm(tornado.web.RequestHandler):
     def get(self):
-        var = self.get_argument('test')
+        var = self.get_argument('test',None)
         if not var:
             try:
                 job, part = slave_queue.pop()
