@@ -62,7 +62,7 @@ class slave_comm(tornado.web.RequestHandler):
             self.write(content)
             self.finish()
         except(IndexError):
-            self.write_error(404)
+            self.set_status(404)
 
 def main():
     application = tornado.web.Application([
