@@ -20,13 +20,14 @@ def download(job):
             files.write(part_download.content)
     return True
 
-def upload(job):
-    for i in job:
-        out = os.path.splitext(i[1])[0]
-        with open('encode/'+i[0]+'/'+out+'.webm', 'rb') as byte:
-            requests.put('http://cdn.sisalma.com/'+i[0]+'/'+out+'.webm',files = byte, timeout=10)
-    shutil.rmtree('encode',ignore_errors=True)
-    shutil.rmtree('proj',ignore_errors=True)
+def upload(i):
+    #input, name = i[0], i[1]
+    #for i in job:
+    out = os.path.splitext(i[1])[0]
+    with open('encode/'+i[0]+'/'+out+'.webm', mode='rb') as byte:
+        requests.post('http://cdn.sisalma.com/'+i[0]+'/'+out+'.webm',files = byte, timeout=10)
+#    shutil.rmtree('encode',ignore_errors=True)
+#    shutil.rmtree('proj',ignore_errors=True)
     return True
 
 def get_job(cpu_c):
@@ -87,9 +88,12 @@ def main():
     #run function as much as jobs available at the same time
     with Pool(processes = len(list_job)-1) as p:
         p.map(ffmpeg_call, list_job)
+        p.map(upload, list_job)
     
+    shutil.rmtree('encode',ignore_errors=True)
+    shutil.rmtree('proj',ignore_errors=True)
     #upload result to cdn.sisalma.com according to project id
-    upload(list_job)
+    #upload(list_job)
 
 if __name__ == '__main__':
     main()
