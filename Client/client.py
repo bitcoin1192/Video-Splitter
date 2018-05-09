@@ -23,7 +23,7 @@ def download(job):
 def upload(i):
     #input, name = i[0], i[1]
     out = os.path.splitext(i[1])[0]
-    multifiles = [('video', (out+'.webm', open('encode/'+i[0]+'/'+out+'.webm', mode='rb')), 'video/webm')]
+    multifiles = [{'video', (out+'.webm', open('encode/'+i[0]+'/'+out+'.webm', mode='rb')), 'video/webm'}]
     requests.post('http://api.sisalma.com/upload?proj_id='+i[0],files = multifiles, timeout=10)
     return True
 
