@@ -11,7 +11,8 @@ import shutil
 
 class utama(tornado.web.RequestHandler):
     def get(self):
-        self.write("hello world")
+    #say hello to everyone    
+        self.finish("Welcome To Backend API")
 
 class acak(tornado.web.RequestHandler):
     def get(self):
@@ -20,8 +21,7 @@ class acak(tornado.web.RequestHandler):
         ff.create_folder(const,ngacak)
         ff.create_folder(const2,ngacak)
         print(proj_id[len(proj_id)-1])
-        self.write(str(ngacak))
-        self.finish()
+        self.finish(str(ngacak))
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
@@ -32,12 +32,10 @@ class jobstart(tornado.web.RequestHandler):
             #Queueing pending job
             search.queue_pass_array(var)
             print(var)
-            self.write(str(var))
-            self.finish()
+            self.finish(str(var))
         else:
             print('Accessing to Unknown ID')
-            self.write_error(404)
-            self.finish()
+            self.set_status(404,reason='Unknown ID')
 
 class stats(tornado.web.RequestHandler):
     def get(self):
@@ -45,14 +43,12 @@ class stats(tornado.web.RequestHandler):
         a, b = search.find(proj_id, var)
         if a is None:
             print('Accessing to Unknown ID')
-            self.write_error(404)
-            self.finish
+            self.set_status(404,reason='Unknown ID')
         else:
             var = str(a[1])
             count = str(b)
             print(var + count)
-            self.write(var)
-            self.finish
+            self.finish(var)
         
 
 class slave_comm(tornado.web.RequestHandler):
@@ -62,21 +58,18 @@ class slave_comm(tornado.web.RequestHandler):
             try:
                 job, part = slave_queue.pop()
                 content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
-                self.write(content)
-                self.finish()
+                self.finish(content)
             except(IndexError):
-                self.set_status(404)
+                self.set_status(404,reason='no job')
         else:
             try:
                 cool = len(slave_queue)
                 if cool == 0 :
                     raise IndexError
                 else:
-                    self.set_status(200)
-                    self.finish('ok')
+                    self.set_status(200, reason='ok')
             except(IndexError):
-                self.set_status(404)
-                self.finish('nope')
+                self.set_status(404, reason='no video to be encode')
 
 class upload_files(tornado.web.RequestHandler):
     #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
@@ -143,4 +136,9 @@ if __name__ == "__main__":
     thread = threading.Thread(target=ffmpeg_call, args=())
     thread.daemon = True # Daemonize thread
     thread.start()
-    main()
+    try:
+        main()
+    except(KeyboardInterrupt):
+        shutil.rmtree(const)
+        shutil.rmtree(const2)
+        print('Program interupt. Deleting folder project')
