@@ -25,7 +25,9 @@ class acak(tornado.web.RequestHandler):
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
-        var = self.get_argument('id')
+        var = self.get_argument('id', None)
+        if not var:
+            self.set_status(404,reason='No id set')
         arr = proj_id
         dem = search.edit_stats(arr, var)
         if dem is True:
@@ -39,7 +41,7 @@ class jobstart(tornado.web.RequestHandler):
 
 class stats(tornado.web.RequestHandler):
     def get(self):
-        var = self.get_argument('id')
+        var = self.get_argument('id', None)
         a, b = search.find(proj_id, var)
         if a is None:
             print('Accessing to Unknown ID')
