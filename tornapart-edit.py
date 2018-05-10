@@ -29,7 +29,7 @@ class jobstart(tornado.web.RequestHandler):
         arr = proj_id
         dem = search.edit_stats(arr, var)
         if dem is True:
-            #Queueing pending job
+        #Queueing pending job
             search.queue_pass_array(var)
             print(var)
             self.finish(str(var))
@@ -109,8 +109,8 @@ def ffmpeg_call():
         job = search.access_queue()
         
         if job is False:
-            print('No job, time for sleeping for 10 second')
-            time.sleep(15)
+            #print('No job, time for sleeping for 10 second')
+            time.sleep(12)
         else:
             #Return list of file
             result = search.search_file(const+str(job),"mp4")
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     thread.start()
     try:
         main()
-    except(KeyboardInterrupt):
+    except(KeyboardInterrupt,):
         shutil.rmtree(const)
         shutil.rmtree(const2)
         print('Program interupt. Deleting folder project')
