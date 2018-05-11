@@ -23,8 +23,8 @@ def download(job):
 def upload(i):
     #input, name = i[0], i[1]
     out = os.path.splitext(i[1])[0]
-    files = {'file': (out+'.webm', open('encode/'+i[0]+'/'+out+'.webm', mode='rb'), 'video/webm')}
-    requests.post('http://api.sisalma.com/upload?proj_id='+i[0],files = files)
+    files = {'file': open('encode/'+i[0]+'/'+out+'.webm', mode='rb')}
+    requests.post('http://api.sisalma.com/upload?proj_id='+i[0],files = files,headers={'Content-Type': 'application/octet-stream'})
     print('upload ok ...')
     return True
 
