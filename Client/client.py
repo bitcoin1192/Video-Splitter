@@ -96,4 +96,9 @@ def main():
         shutil.rmtree('proj',ignore_errors=True)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except(KeyboardInterrupt):
+        shutil.rmtree('encode',ignore_errors=True)
+        shutil.rmtree('proj',ignore_errors=True)
+        print('Folder deleted')

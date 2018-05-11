@@ -79,14 +79,14 @@ class upload_files(tornado.web.RequestHandler):
         try:
             files = self.request.files['file']
             proj_id = self.get_argument('proj_id')
+            filename = files['filename']
+            with open(const2+proj_id+'/'+filename, "wb") as out:
+                out.write(files)
+                out.close()
+                print(filename)
+            self.set_status(200,reason='OK')
         except:
             self.set_status(404, reason='You didnt upload anything')
-        filename = files['filename']
-        with open(const2+proj_id+'/'+filename, "wb") as out:
-            out.write(files)
-            out.close()
-            print(filename)
-        self.set_status(200,reason='OK')
 
 def main():
     application = tornado.web.Application([
