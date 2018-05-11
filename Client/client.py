@@ -24,8 +24,9 @@ def upload(i):
     #input, name = i[0], i[1]
     out = os.path.splitext(i[1])[0]
     files = {'file': open('encode/'+i[0]+'/'+out+'.webm', mode='rb')}
-    demas = requests.post('http://api.sisalma.com/upload?proj_id='+i[0],files = files,headers={'Content-Type': 'application/octet-stream'})
-    print('upload ok ...'+demas)
+    ston = requests.post('http://api.sisalma.com/upload?proj_id='+i[0],files = files,headers={'Content-Type': 'application/octet-stream'})
+    print(ston.text)
+    print('upload ok ...')
     return True
 
 def get_job(cpu_c):
@@ -55,7 +56,7 @@ def something():
 def ffmpeg_call(i):
     input, name = i[0], i[1]
     out = os.path.splitext(name)[0]
-    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','encode/'+input+'/'+out+'.webm'])
+    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-minrate','300k','encode/'+input+'/'+out+'.webm'])
 
 def main():
     global cpu_count
