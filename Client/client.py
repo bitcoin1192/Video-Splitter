@@ -101,8 +101,10 @@ def main():
 
 if __name__ == '__main__':
     try:
+        hostname = platform.node()
         main()
-    except(KeyboardInterrupt):
+    except:
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
-        print('Folder deleted')
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+        print('Folder deleted, delete instances now...')
