@@ -8,6 +8,7 @@ import threading
 import ffmpeg as ff
 import json
 import shutil
+import base64
 
 class utama(tornado.web.RequestHandler):
     def get(self):
@@ -77,11 +78,12 @@ class upload_files(tornado.web.RequestHandler):
     #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
     def post(self):
         try:
-            files = self.request.files['files']
+            files = json.loads(self.request.body)
             proj_id = self.get_argument('proj_id')
-            filename = list(files.keys())[0]
-            binary = files[str(filename)]
+            filename = str(list(files.keys())[0])
+            binary = base64.b64decode(files.value[filename])
             with open(const2+proj_id+'/'+filename, "wb") as out:
+                print(filename)
                 out.write(binary)
                 out.close()
             self.set_status(200,reason='OK')

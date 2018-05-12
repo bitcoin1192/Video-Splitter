@@ -7,6 +7,7 @@ import multiprocessing
 from multiprocessing import Pool
 import ffmpeg as ff
 import shutil
+import base64
 
 
 def download(job):
@@ -22,9 +23,12 @@ def download(job):
 
 def upload(i):
     #input, name = i[0], i[1]
-    out = os.path.splitext(i[1])[0]
-    files = {out+'.webm': open('encode/'+i[0]+'/'+out+'.webm', mode='rb')}
-    requests.post('http://api.sisalma.com/upload?proj_id='+i[0],files = files)
+    out = str(os.path.splitext(i[1])[0])+'.webm'
+    files = open('encode/'+i[0]+'/'+out+'.webm', mode='rb')
+    b64_files = base64.b64encode(files)
+    datas = {out : b64_files}
+    print(datas)
+    requests.post('http://api.sisalma.com/upload?proj_id='+i[0],data = datas)
     print('upload ok ...')
     return True
 
