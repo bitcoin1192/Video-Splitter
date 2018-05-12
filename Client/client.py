@@ -24,7 +24,7 @@ def download(job):
 def upload(i):
     #input, name = i[0], i[1]
     out = str(os.path.splitext(i[1])[0])+'.webm'
-    files = open('encode/'+i[0]+'/'+out+'.webm', mode='rb')
+    files = open('encode/'+i[0]+'/'+out, mode='rb')
     b64_files = base64.b64encode(files)
     datas = {out : b64_files}
     print(datas)
