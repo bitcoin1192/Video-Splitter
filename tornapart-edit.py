@@ -78,7 +78,7 @@ class upload_files(tornado.web.RequestHandler):
     #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
     def post(self):
         try:
-            files = json.loads(self.request.body)
+            files = json.loads(self.request.data)
             proj_id = self.get_argument('proj_id')
             filename = str(list(files.keys())[0])
             print(filename)
