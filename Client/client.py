@@ -93,6 +93,7 @@ def main():
     #check for job availability
         list_job = something()
         if list_job is None:
+            print('error in listjob')
             raise EnvironmentError
         
     #download media file
