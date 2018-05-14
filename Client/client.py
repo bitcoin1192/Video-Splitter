@@ -104,8 +104,12 @@ def main():
         
     #run function as much as jobs available at the same time
         with Pool(processes = len(list_job)-1) as p:
-            p.map(ffmpeg_call, list_job)
-            p.map(upload, list_job)
+            try:
+                p.map(ffmpeg_call, list_job)
+                p.map(upload, list_job)
+            except:
+                print('error in pool')
+                raise EnvironmentError
         
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
