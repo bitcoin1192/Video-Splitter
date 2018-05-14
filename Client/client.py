@@ -63,7 +63,7 @@ def ffmpeg_call(i):
     input, name = i[0], i[1]
     print(i)
     out = os.path.splitext(name)[0]
-    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','encode/'+input+'/'+out+'.webm'])
+    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
     return True
 
 def exit_gracefully():
