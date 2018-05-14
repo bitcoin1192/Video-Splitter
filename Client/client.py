@@ -66,7 +66,7 @@ def ffmpeg_call(i):
 def exit_gracefully():
     hostname = platform.node()
     try:
-        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+#        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
         exit('exit program...')
     except:
         print('Not gcloud')
