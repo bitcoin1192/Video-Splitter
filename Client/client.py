@@ -15,7 +15,7 @@ def download(job):
     for i in job:
         ff.create_folder('proj/',i[0])
         ff.create_folder('encode/',i[0])
-        part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10)
+        part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10000)
         if part_download is None:
             return False
         with open('proj/'+i[0]+'/'+i[1], mode='wb') as files:
@@ -82,7 +82,7 @@ def main():
         
     #check if main server is not ready
         try:
-            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=10)
+            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=1000)
             api.raise_for_status()
         
     #delete instances as soon as exception encountered 
