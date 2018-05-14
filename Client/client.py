@@ -112,6 +112,7 @@ if __name__ == '__main__':
     try:
         main()
     except:
+        print(Exception)
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
         print('Deleting Folder and instances NOW...')
