@@ -82,7 +82,7 @@ def main():
         
     #check if main server is not ready
         try:
-            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=1000)
+            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=10)
             api.raise_for_status()
         
     #delete instances as soon as exception encountered 
@@ -112,7 +112,6 @@ if __name__ == '__main__':
     try:
         main()
     except:
-        print(Exception)
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
         print('Deleting Folder and instances NOW...')
