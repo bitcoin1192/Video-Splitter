@@ -85,7 +85,7 @@ class upload_files(tornado.web.RequestHandler):
                 print(filename)
                 binary = base64.b64decode(json_data[filename])
                 with open(const2+proj_id+'/'+filename, "wb") as out:
-                    out.write(binary.read())
+                    out.write(binary)
                     out.close()
                 self.set_status(200,reason='OK')
             except ValueError:
