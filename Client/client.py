@@ -25,10 +25,11 @@ def upload(i):
     #input, name = i[0], i[1]
     out = str(os.path.splitext(i[1])[0])+'.webm'
     files = open('encode/'+i[0]+'/'+out, mode='rb')
+    parameter = {'proj_id': i[0]}
     b64_files = base64.b64encode(files.read())
     datas = {out : b64_files}
     print(datas)
-    requests.post('http://api.sisalma.com/upload?proj_id='+i[0],data = datas)
+    requests.post('http://api.sisalma.com/upload',params= parameter,json= datas)
     print('upload ok ...')
     return True
 
@@ -59,7 +60,7 @@ def something():
 def ffmpeg_call(i):
     input, name = i[0], i[1]
     out = os.path.splitext(name)[0]
-    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-minrate','300k','encode/'+input+'/'+out+'.webm'])
+    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-minrate','300k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
 
 def main():
     global cpu_count
