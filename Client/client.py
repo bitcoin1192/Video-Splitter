@@ -73,6 +73,7 @@ def exit_gracefully():
         exit('exit program...')
 
 def main():
+    print('Running client.py')
     global cpu_count
     status = True
     while status == True:
