@@ -17,6 +17,7 @@ def download(job):
         ff.create_folder('encode/',i[0])
         part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10000)
         if part_download is None:
+            print('error in part_download')
             return False
         with open('proj/'+i[0]+'/'+i[1], mode='wb') as files:
             files.write(part_download.content)
@@ -61,7 +62,7 @@ def something():
 def ffmpeg_call(i):
     input, name = i[0], i[1]
     out = os.path.splitext(name)[0]
-    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-minrate','300k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
+    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-minrate','300k','encode/'+input+'/'+out+'.webm'])
 
 def exit_gracefully():
     hostname = platform.node()
