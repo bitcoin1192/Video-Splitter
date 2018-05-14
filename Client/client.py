@@ -99,6 +99,7 @@ def main():
     #download media file
         res = download(list_job)
         if res is False:
+            print('error in res')
             raise EnvironmentError
         
     #run function as much as jobs available at the same time
@@ -107,7 +108,6 @@ def main():
             p.map(upload, list_job)
         
         shutil.rmtree('encode',ignore_errors=True)
-
         shutil.rmtree('proj',ignore_errors=True)
 if __name__ == '__main__':
     try:
