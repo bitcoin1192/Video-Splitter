@@ -108,21 +108,21 @@ def main():
         
     #run function as much as jobs available at the same time
         with Pool(processes = len(list_job)-1) as p:
-           # try:
-            p.map(ffmpeg_call, list_job)
-            p.map(upload, list_job)
-           # except:
-            #    print('error in pool')
-            #    raise EnvironmentError
+            try:
+                p.map(ffmpeg_call, list_job)
+                p.map(upload, list_job)
+            except:
+                print('error in pool')
+                raise EnvironmentError
         
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
 if __name__ == '__main__':
-    #try:
-    main()
-    #except:
-    #    shutil.rmtree('encode',ignore_errors=True)
-    #    shutil.rmtree('proj',ignore_errors=True)
-    #    print('Deleting Folder and instances NOW...')
-    #    time.sleep(10)
-    #    exit_gracefully()
+    try:
+        main()
+    except:
+        shutil.rmtree('encode',ignore_errors=True)
+        shutil.rmtree('proj',ignore_errors=True)
+        print('Deleting Folder and instances NOW...')
+        time.sleep(10)
+        exit_gracefully()
