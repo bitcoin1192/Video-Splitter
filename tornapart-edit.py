@@ -21,6 +21,7 @@ class acak(tornado.web.RequestHandler):
         proj_id.append([ngacak,0,time.time()])
         ff.create_folder(const,ngacak)
         ff.create_folder(const2,ngacak)
+        ff.create_folder(const3,ngacak)
         print(proj_id[len(proj_id)-1])
         self.finish(str(ngacak))
 
@@ -84,7 +85,7 @@ class upload_files(tornado.web.RequestHandler):
                 filename = str(list(json_data.keys())[0])
                 print(filename)
                 binary = base64.b64decode(json_data[filename])
-                with open(const2+proj_id+'/'+filename, "wb") as out:
+                with open(const3+proj_id+'/'+filename, "wb") as out:
                     out.write(binary)
                     out.close()
                 self.set_status(200,reason='OK')
@@ -137,6 +138,7 @@ def ffmpeg_call():
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/origin/'
     const2 = '/mnt/volume-sgp1-01/proj/'
+    const3 = '/mnt/volume-sgp1-01/webm/'
     proj_id = []
     slave_queue = []
     thread = threading.Thread(target=ffmpeg_call, args=())

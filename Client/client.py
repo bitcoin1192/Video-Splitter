@@ -8,6 +8,7 @@ from multiprocessing import Pool
 import ffmpeg as ff
 import shutil
 import base64
+import time
 
 
 def download(job):
@@ -62,12 +63,20 @@ def ffmpeg_call(i):
     out = os.path.splitext(name)[0]
     subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-minrate','300k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
 
+def exit_gracefully():
+    hostname = platform.node()
+    try:
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+        exit('exit program...')
+    except:
+        print('Not gcloud')
+        exit('exit program...')
+
 def main():
     global cpu_count
     status = True
     while status == True:
-    #Check cpu core count and hostname
-        hostname = platform.node()
+    #Check cpu core count
         cpu_count = multiprocessing.cpu_count()
         
     #check if main server is not ready
@@ -75,22 +84,20 @@ def main():
             api = requests.get('http://api.sisalma.com/slave?test=1', timeout=10)
             api.raise_for_status()
         
-    #delete instances as soon as eception encountered 
+    #delete instances as soon as exception encountered 
         except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
-            print('error handled, deleting this instance')
-            subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-            exit('woops')
+            print('Server is not running probably')
+            raise EnvironmentError
         
     #check for job availability
         list_job = something()
         if list_job is None:
-            subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-            exit('woops')
+            raise EnvironmentError
         
     #download media file
         res = download(list_job)
         if res is False:
-            subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+            raise EnvironmentError
         
     #run function as much as jobs available at the same time
         with Pool(processes = len(list_job)-1) as p:
@@ -98,18 +105,14 @@ def main():
             p.map(upload, list_job)
         
         shutil.rmtree('encode',ignore_errors=True)
-        shutil.rmtree('proj',ignore_errors=True)
 
+        shutil.rmtree('proj',ignore_errors=True)
 if __name__ == '__main__':
     try:
-        hostname = platform.node()
         main()
     except:
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
-        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-        #try:
-         #   subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-        #except:
-        #    print('im not in gcloud... WTF')
-        print('Folder deleted, delete instances now...')
+        print('Deleting Folder and instances NOW...')
+        time.sleep(10)
+        exit_gracefully()
