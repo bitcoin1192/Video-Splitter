@@ -94,6 +94,7 @@ def main():
         
     #check for job availability
         list_job = something()
+        print(list_job[0])
         if list_job is None:
             print('error in listjob')
             raise EnvironmentError
