@@ -28,7 +28,7 @@ def upload(i):
     parameter = {'proj_id': i[0]}
     b64_files = base64.b64encode(files.read())
     datas = {out : b64_files}
-    print(datas)
+    #print(datas)
     requests.post('http://api.sisalma.com/upload',params= parameter,json= datas)
     print('upload ok ...')
     return True
