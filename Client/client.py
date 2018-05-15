@@ -26,8 +26,10 @@ def download(i):
 
 def upload(i):
     out = str(os.path.splitext(i[1])[0])+'.webm'
+    files = open('encode/'+i[0]+'/'+out, mode='rb').read()
+    stringfile = files.encode('utf-8')
     parameter = {'proj_id': i[0]}
-    b64_files = base64.b64encode(open('encode/'+i[0]+'/'+out, mode='rb'))
+    b64_files = base64.b64encode(stringfile)
     try:
         datas = {out : b64_files}
         resp = requests.post('http://api.sisalma.com/upload',params = parameter,json = datas, timeout=10000)
@@ -42,7 +44,7 @@ def get_job(cpu_c):
     list_job = []
     count = 0
     #loop as much as cpu core available
-    while count <= int(cpu_c):
+    while count < int(cpu_c):
         r = requests.get('http://api.sisalma.com/slave', timeout=10)
         try :
             r.raise_for_status()
