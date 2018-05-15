@@ -92,12 +92,6 @@ def main():
             print('error in listjob')
             raise EnvironmentError
         
-    #download media file
-        res = download(list_job)
-        if res is False:
-            print('error in res')
-            raise EnvironmentError
-        
     #run function as much as jobs available at the same time
         with Pool(processes = len(list_job)-1) as p:
             try:
