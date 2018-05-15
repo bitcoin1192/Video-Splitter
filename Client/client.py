@@ -12,7 +12,7 @@ import time
 
 
 def download(i):
-    out = i[1]
+    out = str(i[1])
     ff.create_folder('proj/',i[0])
     ff.create_folder('encode/',i[0])
     part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+out, timeout=10000)
