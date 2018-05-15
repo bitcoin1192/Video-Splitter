@@ -79,17 +79,17 @@ class upload_files(tornado.web.RequestHandler):
     #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
     def post(self):
         if self.request.body:
+            json_data = json.loads(self.request.body)
+            proj_id = self.get_argument('proj_id')
+            filename = str(list(json_data.keys())[0])
+            print(filename)
             try:
-                json_data = json.loads(self.request.body)
-                proj_id = self.get_argument('proj_id')
-                filename = str(list(json_data.keys())[0])
-                print(filename)
                 binary = base64.b16decode(json_data[filename])
                 with open(const3+proj_id+'/'+filename, "wb") as out:
                     out.write(binary)
                     out.close()
                 self.set_status(200,reason='OK')
-            except ValueError:
+            except:
                 self.set_status(404, reason='You didnt send anything')
         else:
             self.set_status(404, reason='You didnt send anything')
@@ -116,7 +116,7 @@ def ffmpeg_call():
         
         if job is False:
             #print('No job, time for sleeping for 10 second')
-            time.sleep(12)
+            time.sleep(8)
         else:
             #Return list of file
             result = search.search_file(const+str(job),"mp4")
@@ -146,7 +146,7 @@ if __name__ == "__main__":
     thread.start()
     try:
         main()
-    except(KeyboardInterrupt,):
+    except(KeyboardInterrupt):
         shutil.rmtree(const)
         shutil.rmtree(const2)
         print('Program interupt. Deleting folder project')
