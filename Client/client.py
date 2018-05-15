@@ -27,9 +27,8 @@ def download(i):
 def upload(i):
     out = str(os.path.splitext(i[1])[0])+'.webm'
     files = open('encode/'+i[0]+'/'+out, mode='rb').read()
-    stringfile = files.encode('utf-8')
     parameter = {'proj_id': i[0]}
-    b64_files = base64.b64encode(stringfile)
+    b64_files = base64.b64encode(files)
     try:
         datas = {out : b64_files}
         resp = requests.post('http://api.sisalma.com/upload',params = parameter,json = datas, timeout=10000)
