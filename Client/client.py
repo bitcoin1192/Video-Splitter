@@ -29,7 +29,7 @@ def upload(i):
     parameter = {'proj_id': i[0]}
     b64_files = base64.b64encode(files.read())
     datas = {out : b64_files}
-    requests.post('http://api.sisalma.com/upload',params= parameter,json= datas)
+    requests.post('http://api.sisalma.com/upload',params = parameter,json = datas)
     print('upload ok ...')
     return True
 
@@ -105,6 +105,7 @@ def main():
     #run function as much as jobs available at the same time
         with Pool(processes = len(list_job)-1) as p:
             try:
+                p.map(download, list_job)
                 p.map(ffmpeg_call, list_job)
                 p.map(upload, list_job)
             except:
