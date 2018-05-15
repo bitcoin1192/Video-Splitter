@@ -24,13 +24,11 @@ def download(job):
     return True
 
 def upload(i):
-    #input, name = i[0], i[1]
     out = str(os.path.splitext(i[1])[0])+'.webm'
     files = open('encode/'+i[0]+'/'+out, mode='rb')
     parameter = {'proj_id': i[0]}
-    b64_files = str(base64.b64encode(files.read()))
+    b64_files = base64.b64encode(files.read())
     datas = {out : b64_files}
-    #print(datas)
     requests.post('http://api.sisalma.com/upload',params= parameter,json= datas)
     print('upload ok ...')
     return True
