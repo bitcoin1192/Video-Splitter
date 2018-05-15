@@ -75,10 +75,9 @@ def main():
     print('Running client.py')
     status = True
     while status == True:
-            
+        api = requests.get('http://api.sisalma.com/slave?test=1', timeout=1000)
     #check if main server is not ready
         try:
-            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=1000)
             api.raise_for_status()
         
     #delete instances as soon as exception encountered 
@@ -114,7 +113,7 @@ if __name__ == '__main__':
     try:
         cpu_count = multiprocessing.cpu_count()
         main()
-    except:
+    except(KeyboardInterrupt):
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
         print('Deleting Folder and instances NOW...')
