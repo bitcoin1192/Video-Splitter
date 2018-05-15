@@ -78,12 +78,12 @@ def main():
             
     #check if main server is not ready
         try:
-            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=10)
+            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=1000)
             api.raise_for_status()
         
     #delete instances as soon as exception encountered 
         except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
-            print('Server is not running probably')
+            print('Server is not running')
             raise EnvironmentError
         
     #check for job availability
