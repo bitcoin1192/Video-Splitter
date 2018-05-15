@@ -5,20 +5,32 @@ import requests
 import platform
 import multiprocessing
 from multiprocessing import Pool
+import ffmpeg as ff
+import shutil
+import base64
+import time
 
 
 def download(job):
     for i in job:
-        part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10)
+        ff.create_folder('proj/',i[0])
+        ff.create_folder('encode/',i[0])
+        part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+i[1], timeout=10000)
         if part_download is None:
+            print('error in part_download')
             return False
+        with open('proj/'+i[0]+'/'+i[1], mode='wb') as files:
+            files.write(part_download.content)
     return True
 
-def upload(job):
-    for i in job:
-        with open(i[0]+'/'+i[1]+'.webm', 'rb') as byte:
-            requests.put('http://cdn.sisalma.com/'+i[0],files = byte, timeout=10)
-        #files = {'file': ('report.xls', open('report.xls', 'rb'), 'application/vnd.ms-excel', {'Expires': '0'})}
+def upload(i):
+    out = str(os.path.splitext(i[1])[0])+'.webm'
+    files = open('encode/'+i[0]+'/'+out, mode='rb')
+    parameter = {'proj_id': i[0]}
+    b64_files = base64.b64encode(files.read())
+    datas = {out : b64_files}
+    requests.post('http://api.sisalma.com/upload',params = parameter,json = datas)
+    print('upload ok ...')
     return True
 
 def get_job(cpu_c):
@@ -47,41 +59,67 @@ def something():
 
 def ffmpeg_call(i):
     input, name = i[0], i[1]
-    subprocess.call(['ffmpeg','-i','proj/'+input+'/'+name,'-f','segment','-vcodec','copy','encode/'+input+'/'+name+'.webm'])
+    out = os.path.splitext(name)[0]
+    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
+    return True
+
+def exit_gracefully():
+    hostname = platform.node()
+    try:
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+        exit('exit program...')
+    except:
+        print('Not gcloud')
+        exit('exit program...')
 
 def main():
+    print('Running client.py')
     global cpu_count
-    #Check cpu core count and hostname
-    hostname = platform.node()
-    cpu_count = multiprocessing.cpu_count()
-    
+    status = True
+    while status == True:
+    #Check cpu core count
+        cpu_count = multiprocessing.cpu_count()
+        
     #check if main server is not ready
-    try:
-        api = requests.get('http://api.sisalma.com/', timeout=10)
-        api.raise_for_status()
-    
-    #delete instances as soon as eception encountered 
-    except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
-        print('error handled, deleting this instance')
-        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-    
+        try:
+            api = requests.get('http://api.sisalma.com/slave?test=1', timeout=10)
+            api.raise_for_status()
+        
+    #delete instances as soon as exception encountered 
+        except (requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):
+            print('Server is not running probably')
+            raise EnvironmentError
+        
     #check for job availability
-    list_job = something()
-    if list_job is None:
-        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-    
+        list_job = something()
+        if list_job is None:
+            print('error in listjob')
+            raise EnvironmentError
+        
     #download media file
-    res = download(list_job)
-    if res is False:
-        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
-    
+        res = download(list_job)
+        if res is False:
+            print('error in res')
+            raise EnvironmentError
+        
     #run function as much as jobs available at the same time
-    with Pool(processes = len(list_job)-1) as p:
-        r = p.join()
-        r.map(ffmpeg_call, list_job)
-    
-    #upload result to cdn.sisalma.com according to project id
-    upload(list_job)
-
+        with Pool(processes = len(list_job)-1) as p:
+            try:
+                p.map(download, list_job)
+                p.map(ffmpeg_call, list_job)
+                p.map(upload, list_job)
+            except:
+                print('error in pool')
+                raise EnvironmentError
+        
+        shutil.rmtree('encode',ignore_errors=True)
+        shutil.rmtree('proj',ignore_errors=True)
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except:
+        shutil.rmtree('encode',ignore_errors=True)
+        shutil.rmtree('proj',ignore_errors=True)
+        print('Deleting Folder and instances NOW...')
+        time.sleep(10)
+        exit_gracefully()
