@@ -29,6 +29,7 @@ def upload(i):
     files = open('encode/'+i[0]+'/'+out, mode='rb').read()
     parameter = {'proj_id': i[0]}
     b16_files = base64.b16encode(files)
+    print(b16_files)
     try:
         datas = {out : b16_files}
         resp = requests.post('http://api.sisalma.com/upload',params = parameter, json = datas, timeout=10000)
