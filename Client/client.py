@@ -12,6 +12,7 @@ import time
 
 
 def download(i):
+    print(i)
     out = str(i[1])
     ff.create_folder('proj/',i[0])
     ff.create_folder('encode/',i[0])
