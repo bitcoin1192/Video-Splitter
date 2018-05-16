@@ -22,8 +22,9 @@ class acak(tornado.web.RequestHandler):
         ff.create_folder(const,ngacak)
         ff.create_folder(const2,ngacak)
         ff.create_folder(const3,ngacak)
-        print(proj_id[len(proj_id)-1])
-        self.finish(str(ngacak))
+        content = json.dumps({'job' : ngacak}, separators=(',', ':'))
+        #print(proj_id[len(proj_id)-1])
+        self.finish(content)
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
@@ -35,8 +36,9 @@ class jobstart(tornado.web.RequestHandler):
         if dem is True:
         #Queueing pending job
             search.queue_pass_array(var)
+            content = json.dumps({'job' : var}, separators=(',', ':'))
             print(var)
-            self.finish(str(var))
+            self.finish(content)
         else:
             print('Accessing to Unknown ID')
             self.set_status(404,reason='Unknown ID')
