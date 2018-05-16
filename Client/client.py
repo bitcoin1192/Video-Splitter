@@ -9,7 +9,7 @@ import ffmpeg as ff
 import shutil
 import base64
 import time
-
+import json
 
 def download(i):
     print(i)
@@ -28,10 +28,11 @@ def upload(i):
     out = str(os.path.splitext(i[1])[0])+'.webm'
     files = open('encode/'+i[0]+'/'+out, mode='rb').read()
     parameter = {'proj_id': i[0]}
-    b16_files = base64.b16encode(files)
+    b64_files = base64.b64encode(files)
+    b64_files_str = b64_files.decode('utf-8')
     try:
-        datas = {out : b16_files}
-        resp = requests.post('http://api.sisalma.com/upload',params = parameter, json = datas, timeout=10000)
+        datas = {out : b64_files_str}
+        resp = requests.post('http://api.sisalma.com/upload', params = parameter, json = datas, timeout=10000)
         resp.raise_for_status()
         print('upload ok ...')
         return True
