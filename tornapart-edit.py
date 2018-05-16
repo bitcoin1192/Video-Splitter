@@ -82,9 +82,9 @@ class upload_files(tornado.web.RequestHandler):
             json_data = json.loads(self.request.body)
             proj_id = self.get_argument('proj_id')
             filename = str(list(json_data.keys())[0])
-            print(filename)
+            binary_b64encoded = json_data[filename].encode('utf-8')
             try:
-                binary = base64.b16decode(json_data[filename])
+                binary = base64.b64decode(binary_b64encoded)
                 with open(const3+proj_id+'/'+filename, "wb") as out:
                     out.write(binary)
                     out.close()
