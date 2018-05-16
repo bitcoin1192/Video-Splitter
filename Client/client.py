@@ -65,9 +65,9 @@ def ffmpeg_call(i):
     return True
 
 def exit_gracefully():
-    #hostname = platform.node()
+    hostname = platform.node()
     try:
-        #subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
         exit('exit program...')
     except:
         print('Not gcloud')
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     try:
         cpu_count = multiprocessing.cpu_count()
         main()
-    except(KeyboardInterrupt):
+    except(KeyboardInterrupt,EnvironmentError):
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
         print('Deleting Folder and instances NOW...')

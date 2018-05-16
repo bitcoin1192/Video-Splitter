@@ -71,8 +71,10 @@ class slave_comm(tornado.web.RequestHandler):
                 if cool == 0 :
                     raise IndexError
                 else:
+                    print('There is job available')
                     self.set_status(200, reason='ok')
             except(IndexError):
+                print('Zero Job to do')
                 self.set_status(404, reason='no video to be encode')
 
 class upload_files(tornado.web.RequestHandler):
