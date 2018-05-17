@@ -137,6 +137,8 @@ def ffmpeg_call():
                 print('can\'t find the split file on '+ const)
             for i in result_new:
                 slave_queue.append([job,i])
+            result = search.search_file(const+str(job),"mp4")
+            ff.ffmpeg_audio(const+job+'/'+result[0],const3+job)
     
 
 if __name__ == "__main__":
