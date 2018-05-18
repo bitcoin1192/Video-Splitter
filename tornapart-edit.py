@@ -31,7 +31,7 @@ class jobstart(tornado.web.RequestHandler):
         try:
             var = self.get_argument('id')
             extension = self.get_argument('ext')
-        except:
+        except(tornado.web.MissingArgumentError):
             self.set_status(404,reason='No id and extension given')
         arr = proj_id
         dem = search.edit_stats(arr, var)
