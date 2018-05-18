@@ -2,10 +2,10 @@ import tornado.ioloop
 import tornado.web
 import random
 import secrets
-import search
+from common import search
 import time
 import threading
-import ffmpeg as ff
+from ffmpeg import ffmpeg as ff
 import json
 import shutil
 import base64
@@ -28,22 +28,23 @@ class acak(tornado.web.RequestHandler):
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
-        var = self.get_argument('id', None)
-        extension = self.get_argument('ext', None)
-        if not var and extension:
-            self.set_status(404,reason='No id and extension given')
-        arr = proj_id
-        dem = search.edit_stats(arr, var)
-        if dem is True:
-        #Queueing pending job
-            ready = [var,extension]
-            search.queue_pass_array(ready)
-            content = json.dumps({'job' : var}, separators=(',', ':'))
-            print(var)
-            self.finish(content)
-        else:
-            print('Accessing to Unknown ID')
-            self.set_status(404,reason='Unknown ID')
+        try:
+            var = self.get_argument('id')
+            extension = self.get_argument('ext')
+            arr = proj_id
+            dem = search.edit_stats(arr, var)
+            if dem is True:
+            #Insert job to queue
+                ready = [var,extension]
+                search.queue_pass_array(ready)
+                content = json.dumps({'job' : var}, separators=(',', ':'))
+                print(var)
+                self.finish(content)
+            else:
+                print('Accessing to Unknown ID')
+                self.set_status(404,reason='Unknown ID')
+        except(tornado.web.MissingArgumentError):
+            self.set_status(404,reason='no extension or id were given')
 
 class stats(tornado.web.RequestHandler):
     def get(self):
@@ -84,14 +85,19 @@ class slave_comm(tornado.web.RequestHandler):
 class upload_files(tornado.web.RequestHandler):
     #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
     def post(self):
+        setting = self.get_argument('set',0)
+        if int(setting) == 1:
+            path = const
+        else:
+            path = const3
         if self.request.body:
-            json_data = json.loads(self.request.body)
             proj_id = self.get_argument('proj_id')
+            json_data = json.loads(self.request.body)
             filename = str(list(json_data.keys())[0])
             binary_b64encoded = json_data[filename].encode('utf-8')
             try:
                 binary = base64.b64decode(binary_b64encoded)
-                with open(const3+proj_id+'/'+filename, "wb") as out:
+                with open(path+proj_id+'/'+filename, "wb") as out:
                     out.write(binary)
                     out.close()
                 self.set_status(200,reason='OK')
@@ -119,11 +125,11 @@ def ffmpeg_call():
         
         #[proj_id, status, time] array structure
         job = search.access_queue()
-        name, ext = job[0], job[1]
         if job is False:
             #print('No job, time for sleeping for 10 second')
             time.sleep(8)
         else:
+            name, ext = job[0], job[1]
             #Return list of file
             result = search.search_file(const+str(name),ext)
             
@@ -142,6 +148,8 @@ def ffmpeg_call():
             result = search.search_file(const+str(name),ext)
             ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
     
+def gcloud_fire():
+    pass
 
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/origin/'
