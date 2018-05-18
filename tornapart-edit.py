@@ -28,11 +28,8 @@ class acak(tornado.web.RequestHandler):
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
-        try:
-            var = self.get_argument('id')
-            extension = self.get_argument('ext')
-        except:
-            self.set_status(404,reason='No id and extension given')
+        var = self.get_argument('id')
+        extension = self.get_argument('ext')
         arr = proj_id
         dem = search.edit_stats(arr, var)
         if dem is True:
