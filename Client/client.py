@@ -64,10 +64,9 @@ def ffmpeg_call(i):
     subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-crf','27','-b:v','1000k','-minrate','500k','-maxrate','1500k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
     return True
 
-def exit_gracefully():
-    hostname = platform.node()
+def exit_gracefully(hostname,zone):
     try:
-        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone','asia-southeast1-a'])
+        subprocess.call(['gcloud','-q','compute','instances','delete',hostname,'--zone',zone])
         exit('exit program...')
     except:
         print('Not gcloud')
@@ -105,8 +104,21 @@ def main():
         
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
+
+#source : https://stackoverflow.com/questions/31688646/get-the-name-or-id-of-the-current-google-compute-instance
+def metadata_zone(hostname):
+    metadata_server = 'http://metadata.google.internal/computeMetadata/v1/'+str(hostname)+'/'
+    metadata_flavor = {'Metadata-Flavor' : 'Google'}
+    #gce_id = requests.get(metadata_server + 'id', headers = metadata_flavor).text
+    #gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor).text
+    #gce_machine_type = requests.get(metadata_server + 'machine-type', headers = metadata_flavor).text
+    gce_location = requests.get(metadata_server + 'zone', headers = metadata_flavor).text
+    return gce_location
+
 if __name__ == '__main__':
     try:
+        hostname = platform.node()
+        zone = metadata_zone(hostname)
         cpu_count = multiprocessing.cpu_count()
         main()
     except(KeyboardInterrupt,EnvironmentError):
@@ -114,4 +126,4 @@ if __name__ == '__main__':
         shutil.rmtree('proj',ignore_errors=True)
         print('Deleting Folder and instances NOW...')
         time.sleep(10)
-        exit_gracefully()
+        exit_gracefully(hostname,zone)
