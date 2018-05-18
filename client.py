@@ -5,7 +5,7 @@ import requests
 import platform
 import multiprocessing
 from multiprocessing import Pool
-import ffmpeg as ff
+from ffmpeg import ffmpeg as ff
 import shutil
 import base64
 import time
@@ -61,7 +61,7 @@ def get_job(cpu_c):
 def ffmpeg_call(i):
     input, name = i[0], i[1]
     out = os.path.splitext(name)[0]
-    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-crf','27','-b:v','1000k','-minrate','500k','-maxrate','1500k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
+    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-crf','25','-b:v','1000k','-minrate','500k','-maxrate','1500k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
     return True
 
 def exit_gracefully(hostname,zone):
