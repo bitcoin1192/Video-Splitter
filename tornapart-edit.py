@@ -119,11 +119,11 @@ def ffmpeg_call():
         
         #[proj_id, status, time] array structure
         job = search.access_queue()
-        name, ext = job[0], job[1]
         if job is False:
             #print('No job, time for sleeping for 10 second')
             time.sleep(8)
         else:
+            name, ext = job[0], job[1]
             #Return list of file
             result = search.search_file(const+str(name),ext)
             
