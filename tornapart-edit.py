@@ -30,7 +30,7 @@ class jobstart(tornado.web.RequestHandler):
     def get(self):
         var = self.get_argument('id', None)
         extension = self.get_argument('ext', None)
-        if var and extension == False:
+        if var or extension is None:
             self.set_status(404,reason='No id and extension given')
         arr = proj_id
         dem = search.edit_stats(arr, var)
