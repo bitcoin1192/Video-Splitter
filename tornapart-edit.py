@@ -29,13 +29,15 @@ class acak(tornado.web.RequestHandler):
 class jobstart(tornado.web.RequestHandler):
     def get(self):
         var = self.get_argument('id', None)
-        if not var:
-            self.set_status(404,reason='No id set')
+        extension = self.get_argument('ext', None)
+        if not var and extension:
+            self.set_status(404,reason='No id and extension given')
         arr = proj_id
         dem = search.edit_stats(arr, var)
         if dem is True:
         #Queueing pending job
-            search.queue_pass_array(var)
+            ready = [var,extension]
+            search.queue_pass_array(ready)
             content = json.dumps({'job' : var}, separators=(',', ':'))
             print(var)
             self.finish(content)
@@ -117,28 +119,28 @@ def ffmpeg_call():
         
         #[proj_id, status, time] array structure
         job = search.access_queue()
-        
+        name, ext = job[0], job[1]
         if job is False:
             #print('No job, time for sleeping for 10 second')
             time.sleep(8)
         else:
             #Return list of file
-            result = search.search_file(const+str(job),"mp4")
+            result = search.search_file(const+str(name),ext)
             
             #result[0] will result in one string only
-            ff.ffmpeg_call(const+job+'/'+result[0],const2+job)
-            print('success running ffmpeg project ' + str(job))
+            ff.ffmpeg_call(const+name+'/'+result[0],const2+name)
+            print('success running ffmpeg project ' + str(name))
             
             #Return list of file
-            result_new = search.search_file(const2+str(job),"mp4")
+            result_new = search.search_file(const2+str(name),"mp4")
             
             #check if result is not find
             if not result_new:
-                print('can\'t find the split file on '+ const)
+                print('can\'t find the split file on '+ const2+name)
             for i in result_new:
-                slave_queue.append([job,i])
-            result = search.search_file(const+str(job),"mp4")
-            ff.ffmpeg_audio(const+job+'/'+result[0],const3+job)
+                slave_queue.append([name,i])
+            result = search.search_file(const+str(name),ext)
+            ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
     
 
 if __name__ == "__main__":
