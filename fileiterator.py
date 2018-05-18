@@ -10,3 +10,4 @@ def listfilebyformats(directory,format):
 		if filename.endswith("."+format):
 			file.write("file \'"+directory+"/"+filename+"\'\n")
 	file.close
+
