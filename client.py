@@ -10,35 +10,7 @@ import shutil
 import base64
 import time
 import json
-
-def download(i):
-    print(i)
-    out = str(i[1])
-    ff.create_folder('proj/',i[0])
-    ff.create_folder('encode/',i[0])
-    part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+out, timeout=10000)
-    if part_download is None:
-        print('error in part_download')
-        return False
-    with open('proj/'+i[0]+'/'+out, mode='wb') as files:
-        files.write(part_download.content)
-    return True
-
-def upload(i):
-    out = str(os.path.splitext(i[1])[0])+'.webm'
-    files = open('encode/'+i[0]+'/'+out, mode='rb').read()
-    parameter = {'proj_id': i[0]}
-    b64_files = base64.b64encode(files)
-    b64_files_str = b64_files.decode('utf-8')
-    try:
-        datas = {out : b64_files_str}
-        resp = requests.post('http://api.sisalma.com/upload', params = parameter, json = datas, timeout=10000)
-        resp.raise_for_status()
-        print('upload ok ...')
-        return True
-    except(requests.exceptions.HTTPError):
-        print('upload fail...')
-        return False
+from common import io
 
 def get_job(cpu_c):
     list_job = []
@@ -92,12 +64,12 @@ def main():
             print('error in listjob')
             raise EnvironmentError
         
-    #run function as much as jobs available at the same time
+    #run pool mp for paralelization
         with Pool(processes = len(list_job)-1) as p:
             try:
-                p.map(download, list_job)
+                p.map(io.download, list_job)
                 p.map(ffmpeg_call, list_job)
-                p.map(upload, list_job)
+                p.map(io.upload, list_job)
             except:
                 print('error in pool')
                 raise EnvironmentError
@@ -125,5 +97,5 @@ if __name__ == '__main__':
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
         print('Deleting Folder and instances NOW...')
-        time.sleep(10)
+        time.sleep(3)
         exit_gracefully(hostname,zone)
