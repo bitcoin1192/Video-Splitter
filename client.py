@@ -44,7 +44,7 @@ def main():
         
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
-        
+
 def get_job(cpu_c):
     list_job = []
     count = 0
@@ -76,8 +76,6 @@ def exit_gracefully(hostname,zone):
     except:
         print('Not gcloud')
         exit('exit program...')
-
-
 
 #source : https://stackoverflow.com/questions/31688646/get-the-name-or-id-of-the-current-google-compute-instance
 def metadata_zone(hostname):
