@@ -12,38 +12,6 @@ import time
 import json
 from common import io
 
-def get_job(cpu_c):
-    list_job = []
-    count = 0
-    #loop as much as cpu core available
-    while count < int(cpu_c):
-        r = requests.get('http://api.sisalma.com/slave', timeout=10)
-        try :
-            r.raise_for_status()
-        except(requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):    
-            return list_job
-        dict_responses = r.json()
-        list_job.append(list(dict_responses.values()))
-        count = count + 1
-    if not list_job:
-        return False
-    else:
-        return list_job
-
-def ffmpeg_call(i):
-    input, name = i[0], i[1]
-    out = os.path.splitext(name)[0]
-    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-crf','25','-b:v','1000k','-minrate','500k','-maxrate','1500k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
-    return True
-
-def exit_gracefully(hostname,zone):
-    try:
-        subprocess.call(['gcloud','-q','compute','instances','delete',str(hostname),'--zone',str(zone)])
-        exit('exit program...')
-    except:
-        print('Not gcloud')
-        exit('exit program...')
-
 def main():
     print('Running client.py')
     status = True
@@ -76,6 +44,40 @@ def main():
         
         shutil.rmtree('encode',ignore_errors=True)
         shutil.rmtree('proj',ignore_errors=True)
+        
+def get_job(cpu_c):
+    list_job = []
+    count = 0
+    #loop as much as cpu core available
+    while count < int(cpu_c):
+        r = requests.get('http://api.sisalma.com/slave', timeout=10)
+        try :
+            r.raise_for_status()
+        except(requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):    
+            return list_job
+        dict_responses = r.json()
+        list_job.append(list(dict_responses.values()))
+        count = count + 1
+    if not list_job:
+        return False
+    else:
+        return list_job
+
+def ffmpeg_call(i):
+    input, name = i[0], i[1]
+    out = os.path.splitext(name)[0]
+    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-crf','25','-b:v','1000k','-minrate','500k','-maxrate','1500k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
+    return True
+
+def exit_gracefully(hostname,zone):
+    try:
+        subprocess.call(['gcloud','-q','compute','instances','delete',str(hostname),'--zone',str(zone)])
+        exit('exit program...')
+    except:
+        print('Not gcloud')
+        exit('exit program...')
+
+
 
 #source : https://stackoverflow.com/questions/31688646/get-the-name-or-id-of-the-current-google-compute-instance
 def metadata_zone(hostname):
