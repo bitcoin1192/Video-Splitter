@@ -31,3 +31,19 @@ def upload(i):
     except(requests.exceptions.HTTPError):
         print('upload fail...')
         return False
+
+def upload_stream(i):
+    out = str(os.path.splitext(i[1])[0])+'.webm'
+    parameter = {'proj_id': i[0]}
+    with open('encode/'+i[0]+'/'+out, mode='rb') as files:
+        b64_files = base64.b64encode(files.read())
+        b64_files_str = b64_files.decode('utf-8')
+    try:
+        datas = {out : b64_files_str}
+        resp = requests.post('http://api.sisalma.com/upload', params = parameter, json = datas, timeout=8000)
+        resp.raise_for_status()
+        print('upload ok ...')
+        return True
+    except(requests.exceptions.HTTPError):
+        print('upload fail...')
+        return False
