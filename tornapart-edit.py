@@ -2,7 +2,7 @@ import tornado.ioloop
 import tornado.web
 import random
 import secrets
-from common import search
+from common import search, fileiterator
 import time
 import threading
 from ffmpeg import ffmpeg as ff
@@ -85,6 +85,7 @@ class slave_comm(tornado.web.RequestHandler):
 class upload_files(tornado.web.RequestHandler):
     #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
     def post(self):
+        lists = queue_status
         setting = self.get_argument('set',0)
         if int(setting) == 1:
             path = const
@@ -100,6 +101,10 @@ class upload_files(tornado.web.RequestHandler):
                 with open(path+proj_id+'/'+filename, "wb") as out:
                     out.write(binary)
                     out.close()
+                result_new = search.search_file(const3+str(proj_id),"webm")
+                resp, count = search.find(lists,proj_id)
+                if resp[1] == len(result_new):
+                    fileiterator.listfilebyformats(const3+proj_id,'webm')
                 self.set_status(200,reason='OK')
             except:
                 self.set_status(404, reason='You didnt send anything')
@@ -139,12 +144,13 @@ def ffmpeg_call():
             
             #Return list of file
             result_new = search.search_file(const2+str(name),"mp4")
-            
+            queue_status.append([name,len(result_new),0])
             #check if result is not find
             if not result_new:
                 print('can\'t find the split file on '+ const2+name)
             for i in result_new:
                 slave_queue.append([name,i])
+
             result = search.search_file(const+str(name),ext)
             ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
     
@@ -157,6 +163,7 @@ if __name__ == "__main__":
     const3 = '/mnt/volume-sgp1-01/webm/'
     proj_id = []
     slave_queue = []
+    queue_status = []
     thread = threading.Thread(target=ffmpeg_call, args=())
     thread.daemon = True # Daemonize thread
     thread.start()

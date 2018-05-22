@@ -1,6 +1,8 @@
 import requests
 import json
 
+#^\[HorribleSubs\] (.*) \-\ ([0-9]+) \[(480|720|1080)#Regex
+
 def main():
     response = create()
     print(response)
@@ -27,7 +29,8 @@ def wrapper(response,ext):
 
 if __name__ == '__main__':
     try:
-        main()
-        print('finish exec')
+        while True:
+            main()
+            print('finish exec')
     except(KeyboardInterrupt):
         print('exiting program')
