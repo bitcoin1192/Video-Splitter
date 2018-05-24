@@ -16,7 +16,7 @@ def main():
     print('Running client.py')
     status = True
     while status == True:
-        api = requests.get('http://api.sisalma.com/slave?test=1', timeout=1000)
+        api = requests.get('http://api.sisalma.com/slave?test=1', timeout=10000)
     #check if main server is not ready
         try:
             api.raise_for_status()
@@ -50,7 +50,7 @@ def get_job(cpu_c):
     count = 0
     #loop as much as cpu core available
     while count < int(cpu_c):
-        r = requests.get('http://api.sisalma.com/slave', timeout=10)
+        r = requests.get('http://api.sisalma.com/slave', timeout=10000)
         try :
             r.raise_for_status()
         except(requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):    
