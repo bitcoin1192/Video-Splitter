@@ -11,8 +11,7 @@ import shutil
 import base64
 
 class utama(tornado.web.RequestHandler):
-    def get(self):
-    #say hello to everyone    
+    def get(self):   
         self.finish("Welcome To Backend API")
 
 class acak(tornado.web.RequestHandler):
@@ -85,7 +84,6 @@ class slave_comm(tornado.web.RequestHandler):
 class upload_files(tornado.web.RequestHandler):
     #source https://techoverflow.net/2015/06/09/upload-multiple-files-to-the-tornado-webserver/
     def post(self):
-        lists = queue_status
         setting = self.get_argument('set',0)
         if int(setting) == 1:
             path = const
@@ -101,12 +99,6 @@ class upload_files(tornado.web.RequestHandler):
                 with open(path+proj_id+'/'+filename, "wb") as out:
                     out.write(binary)
                     out.close()
-                result_new = search.search_file(const3+str(proj_id),"webm")
-                resp, count = search.find(lists,proj_id)
-                if len(result_new) >= resp[1]:
-                    print('start stitching video')
-                    fileiterator.listfilebyformats(const3+proj_id,'webm')
-                    search.queue_pass_array([proj_id,'webm',1])
                 self.set_status(200,reason='OK')
             except:
                 self.set_status(404, reason='You didnt send anything')
@@ -160,8 +152,18 @@ def ffmpeg_call():
                 ff.ff_stitch(const3+name)
 
     
-def gcloud_fire():
-    pass
+def other_routine():
+    while True:
+        time.sleep(10)
+        lists = queue_status.pop()
+        name, file = lists[0],lists[1]
+        result_new = search.search_file(const3+str(name),"webm")
+        if len(result_new) >= int(file):
+            print('start stitching video')
+            fileiterator.listfilebyformats(const3+proj_id,'webm')        
+            search.queue_pass_array([proj_id,'webm',1])
+        else:
+            queue_status.append(lists)
 
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/origin/'
@@ -171,6 +173,7 @@ if __name__ == "__main__":
     slave_queue = []
     queue_status = []
     thread = threading.Thread(target=ffmpeg_call, args=())
+    thread2 = threading.Thread(target=other_routine, args=())
     thread.daemon = True # Daemonize thread
     thread.start()
     try:
