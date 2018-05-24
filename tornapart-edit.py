@@ -103,7 +103,7 @@ class upload_files(tornado.web.RequestHandler):
                     out.close()
                 result_new = search.search_file(const3+str(proj_id),"webm")
                 resp, count = search.find(lists,proj_id)
-                if resp[1] >= len(result_new):
+                if len(result_new) >= resp[1]:
                     print('start stitching video')
                     fileiterator.listfilebyformats(const3+proj_id,'webm')
                     search.queue_pass_array([proj_id,'webm',1])
@@ -147,7 +147,7 @@ def ffmpeg_call():
                 
                 #Return list of file
                 result_new = search.search_file(const2+str(name),"mp4")
-                queue_status.append([name,len(result_new)])
+                queue_status.append([name,len(result_new)-1])
                 #check if result is not find
                 if not result_new:
                     print('can\'t find the split file on '+ const2+name)
