@@ -16,7 +16,7 @@ def main():
     print('Running client.py')
     status = True
     while status == True:
-        api = requests.get('http://api.sisalma.com/slave?test=1', timeout=10000)
+        api = requests.get('http://api.sisalma.com/slave?test=1', timeout=13000)
     #check if main server is not ready
         try:
             api.raise_for_status()
@@ -71,7 +71,7 @@ def ffmpeg_call(i):
 
 def exit_gracefully(hostname,zone):
     try:
-        subprocess.call(['gcloud','-q','compute','instances','delete',str(hostname),'--zone',str(zone)])
+        #subprocess.call(['gcloud','-q','compute','instances','delete',str(hostname),'--zone',str(zone)])
         exit('exit program...')
     except:
         print('Not gcloud')

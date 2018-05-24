@@ -160,8 +160,8 @@ def other_routine():
         result_new = search.search_file(const3+str(name),"webm")
         if len(result_new) >= int(file):
             print('start stitching video')
-            fileiterator.listfilebyformats(const3+proj_id,'webm')        
-            search.queue_pass_array([proj_id,'webm',1])
+            fileiterator.listfilebyformats(const3+name,'webm')        
+            search.queue_pass_array([name,'webm',1])
         else:
             queue_status.append(lists)
 
