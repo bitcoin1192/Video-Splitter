@@ -21,7 +21,5 @@ def create_folder(path,name):
 def ff_stitch(name):
     subprocess.run(['ffmpeg','-f','concat','-safe',0,'-i',name+'index',name+'output.webm'],shell=False)
 
-def read_file_in_folder(folder_name):
-    pass
 
 #ffmpeg -f concat -safe 0 -i mylist.txt -c copy output

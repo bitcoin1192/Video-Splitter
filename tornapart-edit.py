@@ -35,7 +35,7 @@ class jobstart(tornado.web.RequestHandler):
             dem = search.edit_stats(arr, var)
             if dem is True:
             #Insert job to queue
-                ready = [var,extension]
+                ready = [var,extension,0]#[str,str,typefile]
                 search.queue_pass_array(ready)
                 content = json.dumps({'job' : var}, separators=(',', ':'))
                 print(var)
@@ -105,6 +105,7 @@ class upload_files(tornado.web.RequestHandler):
                 resp, count = search.find(lists,proj_id)
                 if resp[1] == len(result_new):
                     fileiterator.listfilebyformats(const3+proj_id,'webm')
+                    search.queue_pass_array([proj_id,'webm',1])
                 self.set_status(200,reason='OK')
             except:
                 self.set_status(404, reason='You didnt send anything')
@@ -129,30 +130,34 @@ def ffmpeg_call():
     while saat is True:
         
         #[proj_id, status, time] array structure
-        job = search.access_queue()
+        job = search.access_queue(0)
         if job is False:
             #print('No job, time for sleeping for 10 second')
             time.sleep(8)
         else:
-            name, ext = job[0], job[1]
-            #Return list of file
-            result = search.search_file(const+str(name),ext)
-            
-            #result[0] will result in one string only
-            ff.ffmpeg_call(const+name+'/'+result[0],const2+name)
-            print('success running ffmpeg project ' + str(name))
-            
-            #Return list of file
-            result_new = search.search_file(const2+str(name),"mp4")
-            queue_status.append([name,len(result_new),0])
-            #check if result is not find
-            if not result_new:
-                print('can\'t find the split file on '+ const2+name)
-            for i in result_new:
-                slave_queue.append([name,i])
+            name, ext, tipe = job[0], job[1], job[2]
+            if tipe == 0:
+                #Return list of file
+                result = search.search_file(const+str(name),ext)
+                
+                #result[0] will result in one string only
+                ff.ffmpeg_call(const+name+'/'+result[0],const2+name)
+                print('success running ffmpeg project ' + str(name))
+                
+                #Return list of file
+                result_new = search.search_file(const2+str(name),"mp4")
+                queue_status.append([name,len(result_new)])
+                #check if result is not find
+                if not result_new:
+                    print('can\'t find the split file on '+ const2+name)
+                for i in result_new:
+                    slave_queue.append([name,i])
 
-            result = search.search_file(const+str(name),ext)
-            ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
+                result = search.search_file(const+str(name),ext)
+                ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
+            else:
+                ff.ff_stitch(const3+name)
+
     
 def gcloud_fire():
     pass
