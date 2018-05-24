@@ -24,7 +24,7 @@ def upload(i):
     b64_files_str = b64_files.decode('utf-8')
     try:
         datas = {out : b64_files_str}
-        resp = requests.post('http://api.sisalma.com/upload', params = parameter, json = datas, timeout=8000)
+        resp = requests.post('http://api.sisalma.com/upload', params = parameter, json = datas, timeout=10000)
         resp.raise_for_status()
         print('upload ok ...')
         return True
@@ -40,7 +40,7 @@ def upload_stream(i):
         b64_files_str = b64_files.decode('utf-8')
     try:
         datas = {out : b64_files_str}
-        resp = requests.post('http://api.sisalma.com/upload', params = parameter, json = datas, timeout=8000)
+        resp = requests.post('http://api.sisalma.com/upload', params = parameter, json = datas, timeout=10000)
         resp.raise_for_status()
         print('upload ok ...')
         return True

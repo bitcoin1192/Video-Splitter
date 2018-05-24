@@ -103,7 +103,8 @@ class upload_files(tornado.web.RequestHandler):
                     out.close()
                 result_new = search.search_file(const3+str(proj_id),"webm")
                 resp, count = search.find(lists,proj_id)
-                if resp[1] == len(result_new):
+                if resp[1] >= len(result_new):
+                    print('start stitching video')
                     fileiterator.listfilebyformats(const3+proj_id,'webm')
                     search.queue_pass_array([proj_id,'webm',1])
                 self.set_status(200,reason='OK')
@@ -130,7 +131,7 @@ def ffmpeg_call():
     while saat is True:
         
         #[proj_id, status, time] array structure
-        job = search.access_queue(0)
+        job = search.access_queue()
         if job is False:
             #print('No job, time for sleeping for 10 second')
             time.sleep(8)
