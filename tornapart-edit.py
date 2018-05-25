@@ -101,9 +101,25 @@ class upload_files(tornado.web.RequestHandler):
                     out.close()
                 self.set_status(200,reason='OK')
             except:
-                self.set_status(404, reason='You didnt send anything')
+                self.set_status(500, reason='there was problem writing to '+proj_id)
         else:
             self.set_status(404, reason='You didnt send anything')
+
+class cancel_process(tornado.web.RequestHandler):
+    def post(self):
+        if self.request.body:
+            json_data = json.loads(self.request.body)
+            hasil = list(json_data.keys())
+            if not hasil:
+                self.set_status(500, reason='fail parsing json data')
+            else:
+                for i in hasil:
+                    filename = json_data[i]
+                    slave_queue.append([i,filename])
+                self.set_status(200, reason='insert to slave_queue succesful')
+        else:
+            self.set_status(404, reason='unknown payload cant read')
+
 
 def main():
     application = tornado.web.Application([
@@ -112,7 +128,8 @@ def main():
         (r"/start", jobstart),
         (r"/status", stats),
         (r"/slave", slave_comm),
-        (r"/upload", upload_files)
+        (r"/upload", upload_files),
+        (r"/cancel", cancel_process)
     ])
     application.listen(8888)
     tornado.ioloop.IOLoop.current().start()
@@ -125,7 +142,6 @@ def ffmpeg_call():
         #[proj_id, status, time] array structure
         job = search.access_queue()
         if job is False:
-            #print('No job, time for sleeping for 10 second')
             time.sleep(8)
         else:
             name, ext, tipe = job[0], job[1], job[2]

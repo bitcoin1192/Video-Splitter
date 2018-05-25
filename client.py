@@ -12,7 +12,13 @@ import time
 import json
 from common import io
 
+hostname = platform.node()
+zone = metadata_zone(hostname)
+cpu_count = multiprocessing.cpu_count()
+metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
+
 def main():
+    global list_job
     print('Running client.py')
     status = True
     while status == True:
@@ -71,7 +77,7 @@ def ffmpeg_call(i):
 
 def exit_gracefully(hostname,zone):
     try:
-        #subprocess.call(['gcloud','-q','compute','instances','delete',str(hostname),'--zone',str(zone)])
+        subprocess.call(['gcloud','-q','compute','instances','delete',str(hostname),'--zone',str(zone)])
         exit('exit program...')
     except:
         print('Not gcloud')
@@ -79,7 +85,6 @@ def exit_gracefully(hostname,zone):
 
 #source : https://stackoverflow.com/questions/31688646/get-the-name-or-id-of-the-current-google-compute-instance
 def metadata_zone(hostname):
-    metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
     metadata_flavor = {'Metadata-Flavor' : 'Google'}
     #gce_id = requests.get(metadata_server + 'id', headers = metadata_flavor).text
     #gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor).text
@@ -87,11 +92,18 @@ def metadata_zone(hostname):
     gce_location = requests.get(metadata_server + 'zone', headers = metadata_flavor).text
     return gce_location
 
+def check_preemptible():
+    metadata_flavor = {'Metadata-Flavor' : 'Google'}
+    while True:
+        gce_status = requests.get(metadata_server + 'preempted', headers = metadata_flavor).text
+        if gce_status == 'TRUE':
+            raise EnvironmentError
+        else:
+            pass
+        time.sleep(2)
+
 if __name__ == '__main__':
     try:
-        hostname = platform.node()
-        zone = metadata_zone(hostname)
-        cpu_count = multiprocessing.cpu_count()
         main()
     except(KeyboardInterrupt,EnvironmentError):
         shutil.rmtree('encode',ignore_errors=True)
