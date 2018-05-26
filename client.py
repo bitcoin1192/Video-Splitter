@@ -62,7 +62,7 @@ def get_job(cpu_c):
             return list_job
         dict_responses = r.json()
         print (dict_responses)
-        list_job.append(list(dict_responses.values()[::-1]))
+        list_job.append(list(dict_responses.values())[::-1])
         count = count + 1
     if not list_job:
         return None
