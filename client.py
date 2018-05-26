@@ -61,6 +61,7 @@ def get_job(cpu_c):
         except(requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):    
             return list_job
         dict_responses = r.json()
+        print (dict_responses)
         list_job.append(list(dict_responses.values()))
         count = count + 1
     if not list_job:
