@@ -12,10 +12,7 @@ import time
 import json
 from common import io
 
-hostname = platform.node()
-zone = metadata_zone(hostname)
-cpu_count = multiprocessing.cpu_count()
-metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
+
 
 def main():
     global list_job
@@ -102,6 +99,11 @@ def check_preemptible():
 
 def emergency():
     io.upload_emergency(list_job)
+
+hostname = platform.node()
+zone = metadata_zone(hostname)
+cpu_count = multiprocessing.cpu_count()
+metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
 
 if __name__ == '__main__':
     try:
