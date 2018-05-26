@@ -59,17 +59,17 @@ def get_job(cpu_c):
         try :
             r.raise_for_status()
         except(requests.exceptions.ConnectTimeout, requests.exceptions.HTTPError):    
+            print (list_job)
             return list_job
         dict_responses = r.json()
-        keys = list(dict_responses.keys())
-        for i in keys:
-            value = dict_responses[str(keys)]
-            list_job.append([i,value])
-        print (list_job)
+        job = dict_responses['job']
+        part = dict_responses['part']
+        list_job.append([job,part])
         count = count + 1
     if not list_job:
         return None
     else:
+        print (list_job)
         return list_job
 
 def ffmpeg_call(i):
