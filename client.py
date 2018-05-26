@@ -35,7 +35,7 @@ def main():
     #check for job availability
         list_job = get_job(cpu_count)
         if list_job is None:
-            print('error in listjob')
+            print('error in fetching job')
             raise EnvironmentError
         
     #run pool mp for paralelization
@@ -65,7 +65,7 @@ def get_job(cpu_c):
         list_job.append(list(dict_responses.values()))
         count = count + 1
     if not list_job:
-        return False
+        return None
     else:
         return list_job
 
@@ -76,6 +76,7 @@ def ffmpeg_call(i):
     return True
 
 def exit_gracefully(hostname,zone):
+    emergency()
     try:
         subprocess.call(['gcloud','-q','compute','instances','delete',str(hostname),'--zone',str(zone)])
         exit('exit program...')
@@ -86,9 +87,6 @@ def exit_gracefully(hostname,zone):
 #source : https://stackoverflow.com/questions/31688646/get-the-name-or-id-of-the-current-google-compute-instance
 def metadata_zone(hostname):
     metadata_flavor = {'Metadata-Flavor' : 'Google'}
-    #gce_id = requests.get(metadata_server + 'id', headers = metadata_flavor).text
-    #gce_name = requests.get(metadata_server + 'hostname', headers = metadata_flavor).text
-    #gce_machine_type = requests.get(metadata_server + 'machine-type', headers = metadata_flavor).text
     gce_location = requests.get(metadata_server + 'zone', headers = metadata_flavor).text
     return gce_location
 
@@ -101,6 +99,9 @@ def check_preemptible():
         else:
             pass
         time.sleep(2)
+
+def emergency():
+    io.upload_emergency(list_job)
 
 if __name__ == '__main__':
     try:
