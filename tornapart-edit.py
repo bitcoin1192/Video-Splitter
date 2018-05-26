@@ -109,13 +109,15 @@ class cancel_process(tornado.web.RequestHandler):
     def post(self):
         if self.request.body:
             json_data = json.loads(self.request.body)
-            hasil = list(json_data.keys())
+            hasil = list(json_data['out'])
+            print(hasil)
             if not hasil:
                 self.set_status(500, reason='fail parsing json data')
             else:
                 for i in hasil:
-                    filename = json_data[i]
-                    slave_queue.append([i,filename])
+                    slave_queue.append(i)
+                #    filename = json_data[i]
+                #    slave_queue.append([i,filename])
                 self.set_status(200, reason='insert to slave_queue succesful')
         else:
             self.set_status(404, reason='unknown payload cant read')
