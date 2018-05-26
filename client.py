@@ -100,7 +100,10 @@ def check_preemptible():
         time.sleep(2)
 
 def emergency():
-    io.upload_emergency(list_job)
+    if not list_job:
+        return
+    else:
+        io.upload_emergency(list_job)
 
 
 if __name__ == '__main__':
