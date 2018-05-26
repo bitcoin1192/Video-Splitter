@@ -34,6 +34,8 @@ def main():
         if list_job is None:
             print('error in fetching job')
             raise EnvironmentError
+        else:
+            print(list_job)
         
     #run pool mp for paralelization
         with Pool(processes = len(list_job)-1) as p:
