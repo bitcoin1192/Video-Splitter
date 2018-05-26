@@ -83,11 +83,13 @@ def exit_gracefully(hostname,zone):
 
 #source : https://stackoverflow.com/questions/31688646/get-the-name-or-id-of-the-current-google-compute-instance
 def metadata_zone(hostname):
+    metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
     metadata_flavor = {'Metadata-Flavor' : 'Google'}
     gce_location = requests.get(metadata_server + 'zone', headers = metadata_flavor).text
     return gce_location
 
 def check_preemptible():
+    metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
     metadata_flavor = {'Metadata-Flavor' : 'Google'}
     while True:
         gce_status = requests.get(metadata_server + 'preempted', headers = metadata_flavor).text
@@ -105,7 +107,6 @@ if __name__ == '__main__':
     hostname = platform.node()
     zone = metadata_zone(hostname)
     cpu_count = multiprocessing.cpu_count()
-    metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
     try:
         main()
     except(KeyboardInterrupt,EnvironmentError):
