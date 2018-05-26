@@ -100,12 +100,12 @@ def check_preemptible():
 def emergency():
     io.upload_emergency(list_job)
 
-hostname = platform.node()
-zone = metadata_zone(hostname)
-cpu_count = multiprocessing.cpu_count()
-metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
 
 if __name__ == '__main__':
+    hostname = platform.node()
+    zone = metadata_zone(hostname)
+    cpu_count = multiprocessing.cpu_count()
+    metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
     try:
         main()
     except(KeyboardInterrupt,EnvironmentError):
