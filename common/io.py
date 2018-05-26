@@ -34,7 +34,7 @@ def upload(i):
         return False
 
 def upload_emergency(i):
-    data = json.dumps(i)    
+    data = i    
     try:
         datas = {'out' : data}
         resp = requests.post('http://api.sisalma.com/cancel', json = datas, timeout=10000)
