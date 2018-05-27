@@ -174,17 +174,20 @@ def other_routine():
     ss = True
     while ss is True:
         print('stitch routine started')
-        lists = queue_status.pop()
+        if not queue_status:
+            time.sleep(10)
+            return
+        else:
+            lists = queue_status.pop()
         name, file = lists[0],lists[1]
         result_new = search.search_file(const3+str(name),"webm")
         if len(result_new) >= int(file):
             print('start stitching video')
             fileiterator.listfilebyformats(const3+name,'webm')        
             search.queue_pass_array([name,'webm',1])
-            time.sleep(10)
         else:
             queue_status.append(lists)
-            time.sleep(10)
+        time.sleep(10)
 
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/origin/'
@@ -195,8 +198,10 @@ if __name__ == "__main__":
     queue_status = []
     thread = threading.Thread(target=ffmpeg_call, args=())
     thread2 = threading.Thread(target=other_routine, args=())
+    thread2.daemon = True
     thread.daemon = True # Daemonize thread
     thread.start()
+    thread2.start()
     try:
         main()
     except(KeyboardInterrupt):
