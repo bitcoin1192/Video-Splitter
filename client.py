@@ -16,10 +16,10 @@ from common import io
 
 def main():
     global list_job
-    list_job = []
     print('Running client.py')
     status = True
     while status == True:
+        list_job = []
         api = requests.get('http://api.sisalma.com/slave?test=1', timeout=13000)
     #check if main server is not ready
         try:
