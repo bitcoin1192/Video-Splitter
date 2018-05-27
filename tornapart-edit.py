@@ -175,18 +175,17 @@ def other_routine():
     while ss is True:
         print('stitch routine started')
         if not queue_status:
-            time.sleep(10)
-            return
+            pass
         else:
             lists = queue_status.pop()
-        name, file = lists[0],lists[1]
-        result_new = search.search_file(const3+str(name),"webm")
-        if len(result_new) >= int(file):
-            print('start stitching video')
-            fileiterator.listfilebyformats(const3+name,'webm')        
-            search.queue_pass_array([name,'webm',1])
-        else:
-            queue_status.append(lists)
+            name, file = lists[0],lists[1]
+            result_new = search.search_file(const3+str(name),"webm")
+            if len(result_new) >= int(file):
+                print('start stitching video')
+                fileiterator.listfilebyformats(const3+name,'webm')        
+                search.queue_pass_array([name,'webm',1])
+            else:
+                queue_status.append(lists)
         time.sleep(10)
 
 if __name__ == "__main__":
