@@ -171,7 +171,8 @@ def ffmpeg_call():
 
     
 def other_routine():
-    while True:
+    ss = True
+    while ss is True:
         print('stitch routine started')
         lists = queue_status.pop()
         name, file = lists[0],lists[1]
