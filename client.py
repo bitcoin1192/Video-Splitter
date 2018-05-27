@@ -107,10 +107,10 @@ def check_preemptible():
         time.sleep(2)
 
 def emergency():
-    try:
-        io.upload_emergency(list_job)
+    if not list_job:
         return
-    except:
+    else:
+        io.upload_emergency(list_job)
         return
 
 
