@@ -16,6 +16,7 @@ from common import io
 
 def main():
     global list_job
+    list_job = []
     print('Running client.py')
     status = True
     while status == True:
