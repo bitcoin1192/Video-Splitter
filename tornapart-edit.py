@@ -139,6 +139,7 @@ def main():
 # Kode terpanjang dan terlama di program ini !
 def ffmpeg_call():
     saat = True
+    print('ff_call started')
     while saat is True:
         
         #[proj_id, status, time] array structure
@@ -172,8 +173,8 @@ def ffmpeg_call():
     
 def other_routine():
     ss = True
+    print('stitch routine started')
     while ss is True:
-        print('stitch routine started')
         if not queue_status:
             pass
         else:
