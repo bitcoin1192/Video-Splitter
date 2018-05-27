@@ -172,7 +172,6 @@ def ffmpeg_call():
     
 def other_routine():
     while True:
-        time.sleep(10)
         print('stitch routine started')
         lists = queue_status.pop()
         name, file = lists[0],lists[1]
@@ -181,8 +180,10 @@ def other_routine():
             print('start stitching video')
             fileiterator.listfilebyformats(const3+name,'webm')        
             search.queue_pass_array([name,'webm',1])
+            time.sleep(10)
         else:
             queue_status.append(lists)
+            time.sleep(10)
 
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/origin/'
