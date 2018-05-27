@@ -173,6 +173,7 @@ def ffmpeg_call():
 def other_routine():
     while True:
         time.sleep(10)
+        print('stitch routine started')
         lists = queue_status.pop()
         name, file = lists[0],lists[1]
         result_new = search.search_file(const3+str(name),"webm")
