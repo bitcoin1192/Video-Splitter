@@ -20,7 +20,7 @@ def create_folder(path,name):
 
 def ff_stitch(name):
     subprocess.run(['ffmpeg','-f','concat','-safe','0','-i',name+'index','-c','copy',name+'output.webm'],shell=False)
-    subprocess.run(['ffmpeg','-y','-i',name+'output.webm','-i',name+'OUTPUT.opus','-c:v','copy','-c:a','copy','/mnt/volume-sgp1-01/test.webm'],shell=False)
+    subprocess.run(['ffmpeg','-y','-i',name+'output.webm','-i',name+'OUTPUT.opus','-c:v','copy','-c:a','copy','/mnt/volume-sgp1-01/cdn/test.webm'],shell=False)
 
 
 #ffmpeg -f concat -safe 0 -i mylist.txt -c copy output
