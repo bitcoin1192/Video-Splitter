@@ -125,12 +125,15 @@ if __name__ == '__main__':
         zone = metadata_zone(hostname)
         thread = threading.Thread(target=check_preemptible, args=())
         thread.daemon = True
-        thread.start()
     except:
         hostname='djasd'
         zone='zone'
         print('not in gcloud')
     try:
+        if hostname == 'djasd':
+            pass
+        else:
+            thread.start()
         main()
     except(KeyboardInterrupt,EnvironmentError):
         shutil.rmtree('encode',ignore_errors=True)
