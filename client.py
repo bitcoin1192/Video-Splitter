@@ -13,6 +13,7 @@ import threading
 from common import io
 
 
+list_job = []
 
 def main():
     global list_job
@@ -70,14 +71,12 @@ def get_job(cpu_c):
     if not list_job:
         return None
     else:
-        print (list_job)
         return list_job
 
 def ffmpeg_call(i):
     input, name = i[0], i[1]
     out = os.path.splitext(name)[0]
     subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-crf','23','-b:v','1200k','-minrate','500k','-maxrate','1700k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
-    
     return True
 
 def exit_gracefully(hostname,zone):
@@ -103,7 +102,7 @@ def check_preemptible():
     while True:
         gce_status = requests.get(metadata_server + 'preempted', headers = metadata_flavor).text
         if gce_status == 'TRUE':
-            print('Being preemptible')
+            print('Being preempted')
             raise EnvironmentError
         else:
             pass
@@ -116,15 +115,22 @@ def emergency():
         io.upload_emergency(list_job)
         return
 
+#def write_log():
+    #subprocess.call(['gcloud','logging','write',hostname,'""'])
 
 if __name__ == '__main__':
-    hostname = platform.node()
-    zone = metadata_zone(hostname)
     cpu_count = multiprocessing.cpu_count()
-    thread = threading.Thread(target=check_preemptible, args=())
-    thread.daemon = True
     try:
+        hostname = platform.node()
+        zone = metadata_zone(hostname)
+        thread = threading.Thread(target=check_preemptible, args=())
+        thread.daemon = True
         thread.start()
+    except:
+        hostname='djasd'
+        zone='zone'
+        print('not in gcloud')
+    try:
         main()
     except(KeyboardInterrupt,EnvironmentError):
         shutil.rmtree('encode',ignore_errors=True)
