@@ -5,7 +5,7 @@ import subprocess
 #Extract Video and subtitle and convert Audio to opus format
 #'-loglevel','quiet'
 def ffmpeg_call(input,name):
-    subprocess.run(['ffmpeg','-i',input,'-f','segment','-vcodec','copy','-an','-sn','-reset_timestamps','1',name+'/OUTPUT%d_Orig.mp4','-loglevel','quiet'],shell=False)
+    subprocess.run(['ffmpeg','-i',input,'-f','segment','-segment_time','4','-vcodec','copy','-an','-sn','-reset_timestamps','1',name+'/OUTPUT%d_Orig.mp4','-loglevel','quiet'],shell=False)
 
 def ffmpeg_audio(input,name):
     subprocess.run(['ffmpeg','-i',input,'-vn','-sn','-acodec', 'libopus', name+'/OUTPUT.opus','-loglevel','quiet'],shell=False)
