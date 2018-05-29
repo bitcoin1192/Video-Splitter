@@ -9,7 +9,7 @@ from ffmpeg import ffmpeg as ff
 import shutil
 import base64
 import time
-
+import threading
 from common import io
 
 
@@ -99,9 +99,11 @@ def metadata_zone(hostname):
 def check_preemptible():
     metadata_server = 'http://metadata.google.internal/computeMetadata/v1/instance/'
     metadata_flavor = {'Metadata-Flavor' : 'Google'}
+    print('Checking for preemptible')
     while True:
         gce_status = requests.get(metadata_server + 'preempted', headers = metadata_flavor).text
         if gce_status == 'TRUE':
+            print('Being preemptible')
             raise EnvironmentError
         else:
             pass
@@ -119,7 +121,10 @@ if __name__ == '__main__':
     hostname = platform.node()
     zone = metadata_zone(hostname)
     cpu_count = multiprocessing.cpu_count()
+    thread = threading.Thread(target=check_preemptible, args=())
+    thread.daemon = True
     try:
+        thread.start()
         main()
     except(KeyboardInterrupt,EnvironmentError):
         shutil.rmtree('encode',ignore_errors=True)
