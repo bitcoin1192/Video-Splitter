@@ -169,6 +169,7 @@ def ffmpeg_call():
                 ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
             else:
                 ff.ff_stitch(const3+name+'/')
+            shutil.rmtree(const+name+'/')
 
     
 def other_routine():
