@@ -82,7 +82,7 @@ def ffmpeg_call(i):
 def exit_gracefully(hostname,zone):
     emergency()
     try:
-        #subprocess.call(['gcloud','-q','compute','instances','stop',str(hostname),'--zone',str(zone)])
+        subprocess.call(['gcloud','-q','compute','instances','stop',str(hostname),'--zone',str(zone)])
         exit('exit program...')
     except:
         print('Not gcloud')
