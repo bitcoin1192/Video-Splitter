@@ -16,7 +16,7 @@ from common import io
 list_job = []
 
 def main():
-    global list_job
+    global result
     print('Running client.py')
     status = True
     while status == True:
@@ -38,7 +38,7 @@ def main():
             raise EnvironmentError
         else:
             print(list_job)
-        
+            result = list_job
     #run pool mp for paralelization
         with Pool(processes = len(list_job)-1) as p:
             try:
@@ -103,16 +103,16 @@ def check_preemptible():
         gce_status = requests.get(metadata_server + 'preempted', headers = metadata_flavor).text
         if gce_status == 'TRUE':
             print('Being preempted')
-            raise EnvironmentError
+            exit_gracefully(hostname,zone)
         else:
             pass
         time.sleep(2)
 
 def emergency():
-    if not list_job:
+    if not result:
         return
     else:
-        io.upload_emergency(list_job)
+        io.upload_emergency(result)
         return
 
 #def write_log():
@@ -120,11 +120,11 @@ def emergency():
 
 if __name__ == '__main__':
     cpu_count = multiprocessing.cpu_count()
+    thread = threading.Thread(target=check_preemptible, args=())
+    thread.daemon = True
     try:
         hostname = platform.node()
         zone = metadata_zone(hostname)
-        thread = threading.Thread(target=check_preemptible, args=())
-        thread.daemon = True
     except:
         hostname='djasd'
         zone='zone'
