@@ -167,9 +167,9 @@ def ffmpeg_call():
 
                 result = search.search_file(const+str(name),ext)
                 ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
+                shutil.rmtree(const+name+'/')
             else:
                 ff.ff_stitch(const3+name+'/')
-            shutil.rmtree(const+name+'/')
 
     
 def other_routine():
