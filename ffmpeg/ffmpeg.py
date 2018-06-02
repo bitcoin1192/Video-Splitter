@@ -8,7 +8,7 @@ def ffmpeg_call(input,name):
     subprocess.run(['ffmpeg','-i',input,'-f','segment','-c','copy','-an','-sn','-reset_timestamps','0',name+'/OUTPUT%d_Orig.mp4'],shell=False)
 
 def ffmpeg_audio(input,name):
-    subprocess.run(['ffmpeg','-i',input,'-vn','-sn','-acodec', 'libopus', name+'/OUTPUT.opus'],shell=False)
+    subprocess.run(['ffmpeg','-i',input,'-vn','-sn','-af','aformat=channel_layouts="7.1|5.1|stereo"','-acodec', 'libopus', name+'/OUTPUT.opus'],shell=False)
     subprocess.run(['ffmpeg','-i',input,'-vn','-an', name +'/OUTPUT.ass'],shell=False)
 
 #Create folder path for project
@@ -24,3 +24,4 @@ def ff_stitch(name):
 
 
 #ffmpeg -f concat -safe 0 -i mylist.txt -c copy output
+#-af aformat=channel_layouts="7.1|5.1|stereo"
