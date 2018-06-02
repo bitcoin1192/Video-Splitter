@@ -8,7 +8,7 @@ def ffmpeg_call(input,name):
     subprocess.run(['ffmpeg','-i',input,'-f','segment','-c','copy','-an','-sn','-reset_timestamps','0',name+'/OUTPUT%d_Orig.mp4'],shell=False)
 
 def ffmpeg_audio(input,name):
-    subprocess.run(['ffmpeg','-i',input,'-vn','-sn','-b:a','256k','-vbr', name+'/OUTPUT.opus'],shell=False)
+    subprocess.run(['ffmpeg','-i',input,'-vn','-sn','-b:a','256k','-vbr','on', name+'/OUTPUT.opus'],shell=False)
     subprocess.run(['ffmpeg','-i',input,'-vn','-an', name +'/OUTPUT.ass'],shell=False)
 
 #Create folder path for project
