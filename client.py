@@ -15,8 +15,8 @@ from common import io
 
 list_job = []
 
+
 def main():
-    global result
     print('Running client.py')
     status = True
     while status == True:
@@ -38,7 +38,7 @@ def main():
             raise EnvironmentError
         else:
             print(list_job)
-            result = list_job
+
     #run pool mp for paralelization
         with Pool(processes = len(list_job)-1) as p:
             try:
@@ -109,10 +109,10 @@ def check_preemptible():
         time.sleep(2)
 
 def emergency():
-    if not result:
+    if not list_job:
         return
     else:
-        io.upload_emergency(result)
+        io.upload_emergency(list_job)
         return
 
 #def write_log():
