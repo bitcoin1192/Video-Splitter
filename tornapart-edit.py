@@ -18,20 +18,23 @@ class acak(tornado.web.RequestHandler):
     def get(self):
         ngacak = secrets.token_urlsafe(16)
         proj_id.append([ngacak,0,time.time()])
-        ff.create_folder(const,ngacak)
-        ff.create_folder(const2,ngacak)
-        ff.create_folder(const3,ngacak)
-        content = json.dumps({'job' : ngacak}, separators=(',', ':'))
-        #print(proj_id[len(proj_id)-1])
+        list = [const,const2,const3]
+        ff.create_folder(list,ngacak)
+        codecs = ['libvp9','libvp8','x264','x265']
+        container = ['mp4','webm']
+        content = json.dumps({'job' : ngacak,'codecs':str(codecs),'container':str(container)}, separators=(',', ':'))
         self.finish(content)
 
 class jobstart(tornado.web.RequestHandler):
     def get(self):
         try:
-            var = self.get_argument('id')
-            extension = self.get_argument('ext')
+            var, extension = self.get_argument('id'),self.get_argument('ext')
+            codecs, container = self.get_argument('codecs'),self.get_argument('container')
             arr = proj_id
             dem = search.edit_stats(arr, var)
+            validity = ff.check_valid(container,codecs)
+            if validity is False:
+                self.set_status(404, reason='Non valid combination between codec and container')
             if dem is True:
             #Insert job to queue
                 ready = [var,extension,0]#[str,str,typefile]
@@ -43,7 +46,7 @@ class jobstart(tornado.web.RequestHandler):
                 print('Accessing to Unknown ID')
                 self.set_status(404,reason='Unknown ID')
         except(tornado.web.MissingArgumentError):
-            self.set_status(404,reason='no extension or id were given')
+            self.set_status(404,reason='No extension or id were given')
 
 class stats(tornado.web.RequestHandler):
     def get(self):
