@@ -1,6 +1,7 @@
 import os
 import time
 import subprocess
+import ffprobe3
 
 #Extract Video and subtitle and convert Audio to opus format
 #'-loglevel','quiet'
@@ -14,13 +15,27 @@ def ffmpeg_audio(input,name):
 #Create folder path for project
 def create_folder(path,name):
     try:
-        os.makedirs(str(path)+str(name))
+        for i in path:
+            os.makedirs(str(path)+str(name))
+        return True
     except(FileExistsError):
-        return
+        return 'Already eksist'
 
 def ff_stitch(name):
     subprocess.run(['ffmpeg','-f','concat','-safe','0','-i',name+'index','-c','copy',name+'output.webm'],shell=False)
     subprocess.run(['ffmpeg','-y','-i',name+'output.webm','-i',name+'OUTPUT.opus','-c:v','copy','-c:a','copy','/mnt/volume-sgp1-01/cdn/test.webm'],shell=False)
 
-
-#ffmpeg -f concat -safe 0 -i mylist.txt -c copy output
+def check_valid(container, codecs):
+    if container == 'mp4':
+        valid_codecs = ['x264','x265']
+        for i in valid_codecs:
+            if codecs == i:
+                return True
+        return False
+    if container == 'webm':
+        valid_codecs = ['libvp9','libvp8']
+        for i in valid_codecs:
+            if codecs == i:
+                return True
+        return False
+    return False
