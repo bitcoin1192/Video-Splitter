@@ -4,13 +4,17 @@ import json
 #^\[HorribleSubs\] (.*) \-\ ([0-9]+) \[(480|720|1080)#Regex
 
 def main():
-    response = create()
+    response, codecs, container = create()
     print(response)
+    print(codecs)
+    print(container)
     if response == False:
         print('server is offline')
     else:
         wait_extension = input('Ekstensi File yang dikirim : ')
-        wrap = wrapper(response,wait_extension)
+        wait_output_codecs = input('Output codecs yang dipilih : ')
+        wait_output_container = input('Output container yang dipilih : ')
+        wrap = wrapper(response,wait_extension,wait_output_codecs,wait_output_container)
         requests.get('http://api.sisalma.com/start',params=wrap)
     
 def create():
@@ -21,10 +25,12 @@ def create():
         return False
     resp = colar.json()
     response = str(resp['job'])
-    return response
+    avail_codecs = resp['codecs']
+    container = resp['container']
+    return response, avail_codecs, container
 
-def wrapper(response,ext):
-    collect = {'id': response, 'ext':ext}
+def wrapper(response,ext,codecs,container):
+    collect = {'id': response, 'ext':ext, 'codecs':codecs,'container':container}
     return collect
 
 if __name__ == '__main__':
