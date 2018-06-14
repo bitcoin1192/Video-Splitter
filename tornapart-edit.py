@@ -28,8 +28,8 @@ class acak(tornado.web.RequestHandler):
 class jobstart(tornado.web.RequestHandler):
     def get(self):
         try:
-            var, extension = self.get_argument('id'),self.get_argument('ext')
-            codecs, container = self.get_argument('codecs'),self.get_argument('container')
+            var, extension = self.get_argument('id'),self.get_argument('ext').lower
+            codecs, container = self.get_argument('codecs').lower,self.get_argument('container').lower
             arr = proj_id
             dem = search.edit_stats(arr, var)
             validity = ff.check_valid(container,codecs)
@@ -37,7 +37,7 @@ class jobstart(tornado.web.RequestHandler):
                 self.set_status(404, reason='Non valid combination between codec and container')
             if dem is True:
             #Insert job to queue
-                ready = [var,extension,0]#[str,str,typefile]
+                ready = [var,extension,codecs,container,0]#[str,str,str,str,typefile]
                 search.queue_pass_array(ready)
                 content = json.dumps({'job' : var}, separators=(',', ':'))
                 print(var)
@@ -67,8 +67,8 @@ class slave_comm(tornado.web.RequestHandler):
         var = self.get_argument('test',None)
         if not var:
             try:
-                job, part = slave_queue.pop()
-                content = json.dumps({'job' : job, 'part' : part}, separators=(',', ':'))
+                job, part, codecs, container = slave_queue.pop()
+                content = json.dumps({'job' : job, 'part' : part, 'encoder': codecs, 'container': container}, separators=(',', ':'))
                 self.finish(content)
             except(IndexError):
                 self.set_status(404,reason='no job')
@@ -104,7 +104,7 @@ class upload_files(tornado.web.RequestHandler):
                     out.close()
                 self.set_status(200,reason='OK')
             except:
-                self.set_status(500, reason='there was problem writing to '+proj_id)
+                self.set_status(500, reason='There was problem writing to '+proj_id)
         else:
             self.set_status(404, reason='You didnt send anything')
 
@@ -115,15 +115,15 @@ class cancel_process(tornado.web.RequestHandler):
             hasil = list(json_data['out'])
             print(hasil)
             if not hasil:
-                self.set_status(500, reason='fail parsing json data')
+                self.set_status(500, reason='Fail parsing json data')
             else:
                 for i in hasil:
                     slave_queue.append(i)
                 #    filename = json_data[i]
                 #    slave_queue.append([i,filename])
-                self.set_status(200, reason='insert to slave_queue succesful')
+                self.set_status(200, reason='Insert to slave_queue succesful')
         else:
-            self.set_status(404, reason='unknown payload cant read')
+            self.set_status(404, reason='Unknown payload')
 
 
 def main():
@@ -150,7 +150,7 @@ def ffmpeg_call():
         if job is False:
             time.sleep(8)
         else:
-            name, ext, tipe = job[0], job[1], job[2]
+            name, ext, codecs, container, tipe = job[0], job[1],job[2],job[3], job[4]
             if tipe == 0:
                 #Return list of file
                 result = search.search_file(const+str(name),ext)
@@ -166,7 +166,7 @@ def ffmpeg_call():
                 if not result_new:
                     print('can\'t find the split file on '+ const2+name)
                 for i in result_new:
-                    slave_queue.append([name,i])
+                    slave_queue.append([name,i,codecs,container])
 
                 result = search.search_file(const+str(name),ext)
                 ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)

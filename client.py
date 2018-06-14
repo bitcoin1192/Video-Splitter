@@ -64,8 +64,7 @@ def get_job(cpu_c):
             print (list_job)
             return list_job
         dict_responses = r.json()
-        job = dict_responses['job']
-        part = dict_responses['part']
+        job, part, encoder, container = dict_responses['job'],dict_responses['part'],dict_responses['encoder'],dict_responses['container']
         list_job.append([job,part])
         count = count + 1
     if not list_job:
