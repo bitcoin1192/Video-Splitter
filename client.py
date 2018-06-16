@@ -78,7 +78,7 @@ def ffmpeg_call(i):
     for i in res:
         if resolution <= i:
             d = '-1:'+str(i)
-            subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.webm','-vf','scale='+d,'-c:v',encoder,'-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+input+'/'+out+'.'+container,'-loglevel','quiet'])
+            subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mkv','-vf','scale='+d,'-c:v',encoder,'-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+input+'/'+out+'.'+container,'-loglevel','quiet'])
     return True
 
 def exit_gracefully(hostname,zone):

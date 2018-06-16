@@ -161,10 +161,19 @@ def ffmpeg_call():
                 
                 #Find framesize
                 w_res, resolution = ff.check_resolution(const+name+'/'+result[0])
+                res = ['2160','1440','1080','720','360','240','144']
                 
+                #total file * count(resolution)   
+                count = 0
+                for i in res:
+                    if resolution <= i:
+                        count += count
+                    else:
+                        pass
+                        
                 #Return list of file
                 result_new = search.search_file(const2+str(name),"mkv")
-                queue_status.append([name,len(result_new)-1])
+                queue_status.append([name,(len(result_new))*count])
                 #check if result is not find
                 if not result_new:
                     print('can\'t find the split file on '+ const2+name)
