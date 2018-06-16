@@ -33,12 +33,11 @@ class jobstart(tornado.web.RequestHandler):
             arr = proj_id
             dem = search.edit_stats(arr, var)
             validity = ff.check_valid(container,codecs)
-            w_res, h_res = ff.check_resolution(const+var+'.'+extension)
             if validity is False:
                 self.set_status(404, reason='Non valid combination between codec and container')
             if dem is True:
             #Insert job to queue
-                ready = [var,extension,codecs,container,h_res,0]#[str,str,str,str,typefile]
+                ready = [var,extension,codecs,container,0]#[str,str,str,str,typefile]
                 search.queue_pass_array(ready)
                 content = json.dumps({'job' : var}, separators=(',', ':'))
                 print(ready)
@@ -151,7 +150,7 @@ def ffmpeg_call():
         if job is False:
             time.sleep(8)
         else:
-            name, ext, codecs, container, resolution, tipe = job[0], job[1], job[2], job[3], job[4], job[5]
+            name, ext, codecs, container, tipe = job[0], job[1], job[2], job[3], job[4]
             if tipe == 0:
                 #Return list of file
                 result = search.search_file(const+str(name),ext)
@@ -159,6 +158,9 @@ def ffmpeg_call():
                 #result[0] will result in one string only
                 ff.ffmpeg_call(const+name+'/'+result[0],const2+name)
                 print('success running ffmpeg project ' + str(name))
+                
+                #Find framesize
+                w_res, resolution = ff.check_resolution(const+name+'/'+result[0])
                 
                 #Return list of file
                 result_new = search.search_file(const2+str(name),"webm")
