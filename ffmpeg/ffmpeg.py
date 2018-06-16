@@ -42,9 +42,7 @@ def check_valid(container, codecs):
 
 def check_resolution(file):
     ll = ffprobe3.FFProbe(file)
-    try:
-        for i in ll.streams:
-            resolution = i.frame_size()
-    except:
-        resolution = (False,False)
+    for i in ll.streams:
+        resolution = i.frame_size()
+        print(resolution)
     return resolution
