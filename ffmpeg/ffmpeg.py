@@ -46,5 +46,5 @@ def check_resolution(file):
         for i in ll.streams:
             resolution = i.frame_size()
     except:
-        resolution = False
+        resolution = (False,False)
     return resolution

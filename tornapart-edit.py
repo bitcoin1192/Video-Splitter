@@ -41,7 +41,7 @@ class jobstart(tornado.web.RequestHandler):
                 ready = [var,extension,codecs,container,h_res,0]#[str,str,str,str,typefile]
                 search.queue_pass_array(ready)
                 content = json.dumps({'job' : var}, separators=(',', ':'))
-                print(var)
+                print(ready)
                 self.finish(content)
             else:
                 print('Accessing to Unknown ID')
