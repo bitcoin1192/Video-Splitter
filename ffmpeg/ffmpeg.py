@@ -6,7 +6,7 @@ import ffprobe3
 #Extract Video and subtitle and convert Audio to opus format
 #'-loglevel','quiet'
 def ffmpeg_call(input,name):
-    subprocess.run(['ffmpeg','-i',input,'-f','segment','-c','copy','-an','-sn','-reset_timestamps','0',name+'/OUTPUT%d_Orig.mp4'],shell=False)
+    subprocess.run(['ffmpeg','-i',input,'-f','segment','-c','copy','-an','-sn','-reset_timestamps','0',name+'/OUTPUT%d_Orig.webm'],shell=False)
 
 def ffmpeg_audio(input,name):
     subprocess.run(['ffmpeg','-i',input,'-vn','-sn','-ac','2','-b:a','128k','-vbr','on', name+'/OUTPUT.opus'],shell=False)
@@ -16,7 +16,7 @@ def ffmpeg_audio(input,name):
 def create_folder(path,name):
     try:
         for i in path:
-            os.makedirs(str(path)+str(name))
+            os.makedirs(str(i)+str(name))
         return True
     except(FileExistsError):
         return 'Already eksist'
@@ -39,3 +39,9 @@ def check_valid(container, codecs):
                 return True
         return False
     return False
+
+def check_resolution(file):
+    ll = ffprobe3.FFProbe(file)
+    for i in ll.streams:
+        resolution = i.frame_size()
+    return resolution

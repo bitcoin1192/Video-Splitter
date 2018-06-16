@@ -33,11 +33,12 @@ class jobstart(tornado.web.RequestHandler):
             arr = proj_id
             dem = search.edit_stats(arr, var)
             validity = ff.check_valid(container,codecs)
+            resolution = ff.check_resolution(const+var+'.'+extension)
             if validity is False:
                 self.set_status(404, reason='Non valid combination between codec and container')
             if dem is True:
             #Insert job to queue
-                ready = [var,extension,codecs,container,0]#[str,str,str,str,typefile]
+                ready = [var,extension,codecs,container,resolution,0]#[str,str,str,str,typefile]
                 search.queue_pass_array(ready)
                 content = json.dumps({'job' : var}, separators=(',', ':'))
                 print(var)
@@ -67,8 +68,8 @@ class slave_comm(tornado.web.RequestHandler):
         var = self.get_argument('test',None)
         if not var:
             try:
-                job, part, codecs, container = slave_queue.pop()
-                content = json.dumps({'job' : job, 'part' : part, 'encoder': codecs, 'container': container}, separators=(',', ':'))
+                job, part, codecs, container, resolution = slave_queue.pop()
+                content = json.dumps({'job' : job, 'part' : part, 'encoder': codecs, 'container': container, 'resolution':resolution}, separators=(',', ':'))
                 self.finish(content)
             except(IndexError):
                 self.set_status(404,reason='no job')
@@ -150,7 +151,7 @@ def ffmpeg_call():
         if job is False:
             time.sleep(8)
         else:
-            name, ext, codecs, container, tipe = job[0], job[1],job[2],job[3], job[4]
+            name, ext, codecs, container, resolution, tipe = job[0], job[1], job[2], job[3], job[4], job[5]
             if tipe == 0:
                 #Return list of file
                 result = search.search_file(const+str(name),ext)
@@ -160,13 +161,13 @@ def ffmpeg_call():
                 print('success running ffmpeg project ' + str(name))
                 
                 #Return list of file
-                result_new = search.search_file(const2+str(name),"mp4")
+                result_new = search.search_file(const2+str(name),"webm")
                 queue_status.append([name,len(result_new)-1])
                 #check if result is not find
                 if not result_new:
                     print('can\'t find the split file on '+ const2+name)
                 for i in result_new:
-                    slave_queue.append([name,i,codecs,container])
+                    slave_queue.append([name,i,codecs,container,resolution])
 
                 result = search.search_file(const+str(name),ext)
                 ff.ffmpeg_audio(const+name+'/'+result[0],const3+name)
