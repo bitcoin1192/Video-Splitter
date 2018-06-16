@@ -6,7 +6,7 @@ import ffprobe3
 #Extract Video and subtitle and convert Audio to opus format
 #'-loglevel','quiet'
 def ffmpeg_call(input,name):
-    subprocess.run(['ffmpeg','-i',input,'-f','segment','-c','copy','-an','-sn','-reset_timestamps','0',name+'/OUTPUT%d_Orig.webm'],shell=False)
+    subprocess.run(['ffmpeg','-i',input,'-f','segment','-c','copy','-an','-sn','-reset_timestamps','0',name+'/OUTPUT%d_Orig.mkv'],shell=False)
 
 def ffmpeg_audio(input,name):
     subprocess.run(['ffmpeg','-i',input,'-vn','-sn','-ac','2','-b:a','128k','-vbr','on', name+'/OUTPUT.opus'],shell=False)
