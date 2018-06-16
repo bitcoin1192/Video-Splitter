@@ -12,7 +12,7 @@ import time
 import threading
 from common import io
 
-
+res = ['2160','1440','1080','720','360','240','144']
 list_job = []
 
 
@@ -64,8 +64,8 @@ def get_job(cpu_c):
             print (list_job)
             return list_job
         dict_responses = r.json()
-        job, part, encoder, container = dict_responses['job'],dict_responses['part'],dict_responses['encoder'],dict_responses['container']
-        list_job.append([job,part])
+        job, part, encoder, container, resolution = dict_responses['job'],dict_responses['part'],dict_responses['encoder'],dict_responses['container'],dict_responses['resolution']
+        list_job.append([job,part,encoder,container,resolution])
         count = count + 1
     if not list_job:
         return None
@@ -73,9 +73,12 @@ def get_job(cpu_c):
         return list_job
 
 def ffmpeg_call(i):
-    input, name = i[0], i[1]
+    input, name, encoder, container, resolution = i[0], i[1], i[2], i[3], i[4]
     out = os.path.splitext(name)[0]
-    subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mp4','-c:v','libvpx-vp9','-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+input+'/'+out+'.webm','-loglevel','quiet'])
+    for i in res:
+        if resolution <= i:
+            d = '-1:'+str(i)
+            subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.webm','-vf','scale='+d,'-c:v',encoder,'-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+input+'/'+out+'.'+container,'-loglevel','quiet'])
     return True
 
 def exit_gracefully(hostname,zone):
@@ -113,9 +116,6 @@ def emergency():
     else:
         io.upload_emergency(list_job)
         return
-
-#def write_log():
-    #subprocess.call(['gcloud','logging','write',hostname,'""'])
 
 if __name__ == '__main__':
     cpu_count = multiprocessing.cpu_count()

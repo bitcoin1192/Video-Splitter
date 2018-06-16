@@ -33,12 +33,12 @@ class jobstart(tornado.web.RequestHandler):
             arr = proj_id
             dem = search.edit_stats(arr, var)
             validity = ff.check_valid(container,codecs)
-            resolution = ff.check_resolution(const+var+'.'+extension)
+            w_res, h_res = ff.check_resolution(const+var+'.'+extension)
             if validity is False:
                 self.set_status(404, reason='Non valid combination between codec and container')
             if dem is True:
             #Insert job to queue
-                ready = [var,extension,codecs,container,resolution,0]#[str,str,str,str,typefile]
+                ready = [var,extension,codecs,container,h_res,0]#[str,str,str,str,typefile]
                 search.queue_pass_array(ready)
                 content = json.dumps({'job' : var}, separators=(',', ':'))
                 print(var)
