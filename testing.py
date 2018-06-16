@@ -15,10 +15,10 @@ def main():
         wait_output_codecs = input('Output codecs yang dipilih : ')
         wait_output_container = input('Output container yang dipilih : ')
         wrap = wrapper(response,wait_extension,wait_output_codecs,wait_output_container)
-        requests.get('http://api.sisalma.com/start',params=wrap)
+        requests.get('http://'+ip_address+':'+port+'/start',params=wrap)
     
 def create():
-    colar = requests.get('http://api.sisalma.com/create')
+    colar = requests.get('http://'+ip_address+':'+port+'/create')
     try:
         colar.raise_for_status()
     except(requests.exceptions.HTTPError):
@@ -34,6 +34,8 @@ def wrapper(response,ext,codecs,container):
     return collect
 
 if __name__ == '__main__':
+    ip_address = input('Server IP Address : ')
+    port = str(input('Server Port : '))
     try:
         while True:
             main()
