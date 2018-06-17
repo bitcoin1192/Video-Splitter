@@ -8,8 +8,8 @@ import re
 def download(i):
     print(i)
     out = str(i[1])
-    ff.create_folder('proj/',i[0])
-    ff.create_folder('encode/',i[0])
+    ff.create_folder(['proj/'],i[0])
+    ff.create_folder(['encode/'],i[0])
     part_download = requests.get('http://cdn.sisalma.com/'+i[0]+'/'+out, timeout=8000)
     if part_download is None:
         print('error in part_download')
@@ -19,7 +19,7 @@ def download(i):
     return True
 
 def upload(i):
-    out = str(os.path.splitext(i[1])[0])+'.webm'
+    out = str(os.path.splitext(i[1])[0])+'.'+str(i[3])
     files = open('encode/'+i[0]+'/'+out, mode='rb').read()
     parameter = {'proj_id': i[0]}
     b64_files = base64.b64encode(files)

@@ -77,11 +77,12 @@ def get_job(cpu_c):
 
 def ffmpeg_call(i):
     masuk, name, encoder, container, resolution = i[0], i[1], i[2], i[3], i[4]
+    print(masuk+name+encoder+container+str(resolution))
     out = os.path.splitext(name)[0]
+    print(out)
     for i in res:
         if int(i) <= resolution:
-            d = '-1:'+str(i)
-            subprocess.run(['ffmpeg','-i','proj/'+masuk+'/'+out+'.mkv','-vf','scale='+d,'-c:v',encoder,'-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+input+'/'+out+'.'+container,'-loglevel','quiet'])
+            subprocess.run(['ffmpeg','-i','proj/'+masuk+'/'+out+'.mkv','-vf','scale=-1:'+str(i),'-c:v',encoder,'-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+masuk+'/'+out+'.'+container,'-loglevel','quiet'])
     return True
 
 def exit_gracefully(hostname,zone,listss):
