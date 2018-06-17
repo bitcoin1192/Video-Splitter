@@ -72,6 +72,7 @@ def get_job(cpu_c):
     if not list_job:
         return None
     else:
+        print(list_job)
         return list_job
 
 def ffmpeg_call(i):

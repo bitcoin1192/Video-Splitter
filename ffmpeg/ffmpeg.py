@@ -1,7 +1,7 @@
 import os
 import time
 import subprocess
-import ffprobe3
+
 
 #Extract Video and subtitle and convert Audio to opus format
 #'-loglevel','quiet'
@@ -40,9 +40,3 @@ def check_valid(container, codecs):
         return False
     return False
 
-def check_resolution(file):
-    ll = ffprobe3.FFProbe(file)
-    for i in ll.streams:
-        resolution = i.frame_size()
-        print(resolution)
-        return resolution

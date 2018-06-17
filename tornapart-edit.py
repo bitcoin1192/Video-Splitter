@@ -9,6 +9,7 @@ from ffmpeg import ffmpeg as ff
 import json
 import shutil
 import base64
+import ffprobe3
 
 class utama(tornado.web.RequestHandler):
     def get(self):   
@@ -160,7 +161,7 @@ def ffmpeg_call():
                 print('success running ffmpeg project ' + str(name))
                 
                 #Find framesize
-                w_res, resolution = ff.check_resolution(const+name+'/'+result[0])
+                w_res, resolution = check_resolution(const+name+'/'+result[0])
                 res = ['2160','1440','1080','720','360','240','144']
                 
                 #total file * count(resolution)   
@@ -206,6 +207,13 @@ def other_routine():
             else:
                 queue_status.append(lists)
         time.sleep(10)
+
+def check_resolution(file):
+    ll = ffprobe3.FFProbe(file)
+    for i in ll.streams:
+        resolution = i.frame_size()
+        print(resolution)
+        return resolution
 
 if __name__ == "__main__":
     const = '/mnt/volume-sgp1-01/origin/'
