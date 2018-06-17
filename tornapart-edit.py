@@ -178,6 +178,7 @@ def ffmpeg_call():
                 if not result_new:
                     print('can\'t find the split file on '+ const2+name)
                 for i in result_new:
+                    print([name,i,codecs,container,resolution])
                     slave_queue.append([name,i,codecs,container,resolution])
 
                 result = search.search_file(const+str(name),ext)
