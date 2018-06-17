@@ -28,8 +28,8 @@ class acak(tornado.web.RequestHandler):
 class jobstart(tornado.web.RequestHandler):
     def get(self):
         try:
-            var, extension = self.get_argument('id'),self.get_argument('ext').lower
-            codecs, container = self.get_argument('codecs').lower,self.get_argument('container').lower
+            var, extension = self.get_argument('id'),self.get_argument('ext').lower()
+            codecs, container = self.get_argument('codecs').lower(),self.get_argument('container').lower()
             arr = proj_id
             dem = search.edit_stats(arr, var)
             validity = ff.check_valid(container,codecs)
