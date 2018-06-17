@@ -167,13 +167,13 @@ def ffmpeg_call():
                 count = 0
                 for i in res:
                     if int(i) <= resolution:
-                        count += count
+                        count = count + 1
                     else:
                         pass
-                        
+                print(count)
                 #Return list of file
                 result_new = search.search_file(const2+str(name),"mkv")
-                queue_status.append([name,(len(result_new))*count])
+                queue_status.append([name,(len(result_new))*count,container])
                 print(queue_status)
                 #check if result is not find
                 if not result_new:
@@ -197,12 +197,13 @@ def other_routine():
             pass
         else:
             lists = queue_status.pop()
-            name, file = lists[0],lists[1]
-            result_new = search.search_file(const3+str(name),"webm")
+            name, file, container = lists[0],lists[1],lists[2]
+            print(file)
+            result_new = search.search_file(const3+str(name),container)
             if len(result_new) >= int(file):
                 print('start stitching video')
-                fileiterator.listfilebyformats(const3+name,'webm')        
-                search.queue_pass_array([name,'webm',1])
+                fileiterator.listfilebyformats(const3+name,container)        
+                search.queue_pass_array([name,container,1])
             else:
                 queue_status.append(lists)
         time.sleep(10)
