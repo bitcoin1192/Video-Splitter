@@ -150,7 +150,7 @@ def ffmpeg_call():
         if job is False:
             time.sleep(8)
         else:
-            name, ext, codecs, container, tipe = job[0], job[1], job[2], job[3], job[4]
+            name, ext, codecs, container, tipe = job[0], job[1], str(job[2]), str(job[3]), job[4]
             if tipe == 0:
                 #Return list of file
                 result = search.search_file(const+str(name),ext)
@@ -174,6 +174,7 @@ def ffmpeg_call():
                 #Return list of file
                 result_new = search.search_file(const2+str(name),"mkv")
                 queue_status.append([name,(len(result_new))*count])
+                print(queue_status)
                 #check if result is not find
                 if not result_new:
                     print('can\'t find the split file on '+ const2+name)
