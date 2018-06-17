@@ -166,7 +166,7 @@ def ffmpeg_call():
                 #total file * count(resolution)   
                 count = 0
                 for i in res:
-                    if resolution <= i:
+                    if i <= resolution:
                         count += count
                     else:
                         pass
