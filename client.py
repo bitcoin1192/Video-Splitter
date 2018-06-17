@@ -11,6 +11,7 @@ import base64
 import time
 import threading
 from common import io
+import traceback
 
 res = ['2160','1440','1080','720','360','240','144']
 list_job = []
@@ -46,7 +47,8 @@ def main():
                 p.map(ffmpeg_call, list_job)
                 p.map(io.upload, list_job)
             except:
-                print('error in pool')
+                emergency(list_job)
+                traceback.print_exc()
                 raise EnvironmentError
         
         shutil.rmtree('encode',ignore_errors=True)
@@ -73,16 +75,16 @@ def get_job(cpu_c):
         return list_job
 
 def ffmpeg_call(i):
-    input, name, encoder, container, resolution = i[0], i[1], i[2], i[3], i[4]
+    masuk, name, encoder, container, resolution = i[0], i[1], i[2], i[3], i[4]
     out = os.path.splitext(name)[0]
     for i in res:
-        if resolution <= i:
+        if int(i) <= resolution:
             d = '-1:'+str(i)
-            subprocess.run(['ffmpeg','-i','proj/'+input+'/'+out+'.mkv','-vf','scale='+d,'-c:v',encoder,'-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+input+'/'+out+'.'+container,'-loglevel','quiet'])
+            subprocess.run(['ffmpeg','-i','proj/'+masuk+'/'+out+'.mkv','-vf','scale='+d,'-c:v',encoder,'-crf','23','-b:v','1500k','-minrate','700k','-maxrate','2000k','encode/'+input+'/'+out+'.'+container,'-loglevel','quiet'])
     return True
 
-def exit_gracefully(hostname,zone):
-    emergency()
+def exit_gracefully(hostname,zone,listss):
+    emergency(listss)
     try:
         subprocess.call(['gcloud','-q','compute','instances','stop',str(hostname),'--zone',str(zone)])
         exit('exit program...')
@@ -105,16 +107,16 @@ def check_preemptible():
         gce_status = requests.get(metadata_server + 'preempted', headers = metadata_flavor).text
         if gce_status == 'TRUE':
             print('Being preempted')
-            exit_gracefully(hostname,zone)
+            exit_gracefully(hostname,zone,list_job)
         else:
             pass
         time.sleep(2)
 
-def emergency():
-    if not list_job:
+def emergency(job):
+    if not job:
         return
     else:
-        io.upload_emergency(list_job)
+        io.upload_emergency(job)
         return
 
 if __name__ == '__main__':
@@ -139,4 +141,4 @@ if __name__ == '__main__':
         shutil.rmtree('proj',ignore_errors=True)
         print('Deleting Folder and instances NOW...')
         time.sleep(3)
-        exit_gracefully(hostname,zone)
+        exit_gracefully(hostname,zone,list_job)

@@ -170,7 +170,7 @@ def ffmpeg_call():
                         count = count + 1
                     else:
                         pass
-                print(count)
+                
                 #Return list of file
                 result_new = search.search_file(const2+str(name),"mkv")
                 queue_status.append([name,(len(result_new))*count,container])
@@ -198,7 +198,6 @@ def other_routine():
         else:
             lists = queue_status.pop()
             name, file, container = lists[0],lists[1],lists[2]
-            print(file)
             result_new = search.search_file(const3+str(name),container)
             if len(result_new) >= int(file):
                 print('start stitching video')
